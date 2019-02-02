@@ -1,0 +1,39 @@
+---
+title: "Olfactory"
+author: "Enxhi Buxheli"
+date: "2/2/2019"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+# Attaching necessary libraries
+library(tidyverse)
+library(dplyr)
+library(janitor)
+library(knitr)
+```
+
+```{r}
+# Loading in the data
+case_data  <- read_csv("dataverse_files/glynn_sen_daughters_by_case_1.csv") %>% clean_names()
+judge_data <- read_csv("dataverse_files/glynn_sen_daughters_by_judge.csv") %>% clean_names()
+
+# Table 1: Number of Children and Girls for U.S. Courts of Appeals Judges 
+#          Participating in Gender-Related Cases, 1996-2002
+# Here we are keeping the # of children, # of girls, & party affiliation and
+# building a count table
+t1 <- select(judge_data,
+              child, girls, republican) %>% 
+  filter(child < 10, girls < 10) %>% 
+  mutate(party = ifelse(1 == republican, "Republicans", "Democrats")) 
+
+t1 %>% count(child, party) %>% spread(party)
+t1 %>% count(girls, party)
+```
+
+
+
