@@ -8,7 +8,7 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
 
 # Attaching necessary libraries
 library(tidyverse)
@@ -25,15 +25,22 @@ judge_data <- read_csv("dataverse_files/glynn_sen_daughters_by_judge.csv") %>% c
 # Table 1: Number of Children and Girls for U.S. Courts of Appeals Judges 
 #          Participating in Gender-Related Cases, 1996-2002
 # Here we are keeping the # of children, # of girls, & party affiliation and
-# building a count table
+# building a count table. Additionally, here the party name is recoded to be
+# more friendly to a reader of the table ("Republicans" and "Democrats")
 t1 <- select(judge_data,
               child, girls, republican) %>% 
   filter(child < 10, girls < 10) %>% 
-  mutate(party = ifelse(1 == republican, "Republicans", "Democrats")) 
+  mutate(party = ifelse(1 == republican, "Republicans", "Democrats"))
 
-t1 %>% count(child, party) %>% spread(party)
-t1 %>% count(girls, party)
+# Number of Children portion of the table
+t1 %>% 
+  count(party, child) %>% 
+  spread(child, n) %>% 
+  kable(caption = "Number of Children and Girls for U.S. Courts of Appeals 
+        Judges Participating in Gender-Related Cases, 1996-2002")
+
+# Number of Girls portion of the table
+t1 %>% 
+  count(party, girls) %>% 
+  spread(girls, n)
 ```
-
-
-
