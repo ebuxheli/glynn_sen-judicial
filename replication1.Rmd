@@ -1,6 +1,6 @@
 ---
-title: "Olfactory"
-author: "Enxhi Buxheli"
+title: "Daughters"
+author: "Enxhi Buxheli and John LaVelle"
 date: "2/2/2019"
 output:
   pdf_document: default
