@@ -46,3 +46,77 @@ t1 %>%
   spread(girls, n) %>% 
   mutate_all(funs(replace(., is.na(.), "-")))
 ```
+
+```{r}
+# Table 2
+
+proportion_equals_x <- function(data, x, geq = FALSE) {
+  if(geq) {
+    ct <- data %>%
+    filter(child >= x) %>% 
+    count() / length(data)
+  }
+  else {
+    ct <- data %>% 
+    filter(child == x) %>% 
+    count()
+  }
+  ct / count(data)
+}
+
+t2 <- select(judge_data, republican, woman, race, yearb, child, girls) %>% 
+  filter(!is.na(girls) , !is.na(child) ) %>% 
+  mutate(white = ifelse(race == 1, 1, 0))
+
+t2 %>% 
+  summarize(
+    mean_child = mean(child),
+    mean_girls = mean(girls),
+    mean_yearb = mean(yearb, na.rm = TRUE)
+  )
+
+proportion = vector()
+
+for(i in 1:7) {
+  proportion[1][i] <- 
+    t2 %>% 
+    proportion_equals_x(i-1)
+}
+
+proportion[1][7] <- t2 %>% proportion_equals_x(6, geq = TRUE)
+
+proportion_female <- t2 %>% 
+  filter(woman == 1) %>% 
+  count() / count(t2)
+
+# gt(data.frame(proportion, row.names = c(
+# 	"Proportion who have 0 children","1 children",
+# 	"2 children", "3 children",
+# 	"4 children", "5 Children", "6 Children or More")))
+
+
+
+```
+```
+
+t2 %>% 
+  group_by(woman) %>% 
+  summarize(
+    mean_child = mean(child, na.rm = TRUE),
+    mean_girls = mean(girls, na.rm = TRUE),
+    mean_yearb = mean(yearb, na.rm = TRUE)
+  )
+
+t2 %>% 
+  group_by(republican) %>% 
+  summarize(
+    mean_child = mean(child, na.rm = TRUE),
+    mean_girls = mean(girls, na.rm = TRUE),
+    mean_yearb = mean(yearb, na.rm = TRUE)
+  ) 
+
+
+
+kable(t2, caption = "Demographics of U.S. Courts of Appeals Judges Who Voted on Gender-Related Cases, 1996-2002")
+
+```
