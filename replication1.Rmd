@@ -36,11 +36,13 @@ t1 <- select(judge_data,
 t1 %>% 
   count(party, child) %>% 
   spread(child, n) %>% 
+  mutate_all(funs(replace(., is.na(.), "-"))) %>% 
   kable(caption = "Number of Children and Girls for U.S. Courts of Appeals 
         Judges Participating in Gender-Related Cases, 1996-2002")
 
 # Number of Girls portion of the table
 t1 %>% 
   count(party, girls) %>% 
-  spread(girls, n)
+  spread(girls, n) %>% 
+  mutate_all(funs(replace(., is.na(.), "-")))
 ```
