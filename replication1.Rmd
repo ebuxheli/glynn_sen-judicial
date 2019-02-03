@@ -15,13 +15,17 @@ library(tidyverse)
 library(dplyr)
 library(janitor)
 library(knitr)
-```
+library(kableExtra)
 
-```{r}
+# Global option used in table to replace NAs with '-' for aesthetics
+options(knitr.kable.NA = '-')
+
 # Loading in the data
 case_data  <- read_csv("dataverse_files/glynn_sen_daughters_by_case_1.csv") %>% clean_names()
 judge_data <- read_csv("dataverse_files/glynn_sen_daughters_by_judge.csv") %>% clean_names()
+```
 
+```{r}
 # Table 1: Number of Children and Girls for U.S. Courts of Appeals Judges 
 #          Participating in Gender-Related Cases, 1996-2002
 # Here we are keeping the # of children, # of girls, & party affiliation and
@@ -33,16 +37,21 @@ t1 <- select(judge_data,
   mutate(party = ifelse(1 == republican, "Republicans", "Democrats"))
 
 # Number of Children portion of the table
-t1 %>% 
+t1_child <- t1 %>% 
   count(party, child) %>% 
-  spread(child, n) %>% 
-  mutate_all(funs(replace(., is.na(.), "-"))) %>% 
-  kable(caption = "Number of Children and Girls for U.S. Courts of Appeals 
-        Judges Participating in Gender-Related Cases, 1996-2002")
+  spread(child, n)
 
 # Number of Girls portion of the table
-t1 %>% 
+t1_girls <- t1 %>% 
   count(party, girls) %>% 
-  spread(girls, n) %>% 
-  mutate_all(funs(replace(., is.na(.), "-")))
+  spread(girls, n)
+
+# Binding the rows to create one table with girls and children
+t1_combined <- bind_rows(t1_child, t1_girls) %>% 
+  kable("latex", booktabs = T) %>% column_spec(1, bold = T)
+
+# Styling the table to make it look like the original figure
+t1_combined %>% 
+  group_rows("Number of Children", 1, 2, bold = TRUE) %>% 
+  group_rows("Number of Girls", 3, 4, hline_before = T)
 ```
