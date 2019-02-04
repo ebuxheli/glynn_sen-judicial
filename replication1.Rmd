@@ -16,6 +16,7 @@ library(dplyr)
 library(janitor)
 library(knitr)
 library(kableExtra)
+library(gt)
 
 # Global option used in table to replace NAs with '-' for aesthetics
 options(knitr.kable.NA = '-')
