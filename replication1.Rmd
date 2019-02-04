@@ -15,109 +15,291 @@ library(tidyverse)
 library(dplyr)
 library(janitor)
 library(knitr)
-```
 
-```{r}
-# Loading in the data
-case_data  <- read_csv("dataverse_files/glynn_sen_daughters_by_case_1.csv") %>% clean_names()
-judge_data <- read_csv("dataverse_files/glynn_sen_daughters_by_judge.csv") %>% clean_names()
-
-# Table 1: Number of Children and Girls for U.S. Courts of Appeals Judges 
-#          Participating in Gender-Related Cases, 1996-2002
-# Here we are keeping the # of children, # of girls, & party affiliation and
-# building a count table. Additionally, here the party name is recoded to be
-# more friendly to a reader of the table ("Republicans" and "Democrats")
-t1 <- select(judge_data,
-              child, girls, republican) %>% 
-  filter(child < 10, girls < 10) %>% 
-  mutate(party = ifelse(1 == republican, "Republicans", "Democrats"))
-
-# Number of Children portion of the table
-t1 %>% 
-  count(party, child) %>% 
-  spread(child, n) %>% 
-  mutate_all(funs(replace(., is.na(.), "-"))) %>% 
-  kable(caption = "Number of Children and Girls for U.S. Courts of Appeals 
-        Judges Participating in Gender-Related Cases, 1996-2002")
-
-# Number of Girls portion of the table
-t1 %>% 
-  count(party, girls) %>% 
-  spread(girls, n) %>% 
-  mutate_all(funs(replace(., is.na(.), "-")))
-```
-
-```{r}
-# Table 2
-
-proportion_equals_x <- function(data, x, geq = FALSE) {
-  if(geq) {
-    ct <- data %>%
-    filter(child >= x) %>% 
-    count() / length(data)
-  }
-  else {
-    ct <- data %>% 
-    filter(child == x) %>% 
-    count()
-  }
-  ct / count(data)
-}
-
-t2 <- select(judge_data, republican, woman, race, yearb, child, girls) %>% 
-  filter(!is.na(girls) , !is.na(child) ) %>% 
-  mutate(white = ifelse(race == 1, 1, 0))
-
-t2 %>% 
-  summarize(
-    mean_child = mean(child),
-    mean_girls = mean(girls),
-    mean_yearb = mean(yearb, na.rm = TRUE)
-  )
-
-proportion = vector()
-
-for(i in 1:7) {
-  proportion[1][i] <- 
-    t2 %>% 
-    proportion_equals_x(i-1)
-}
-
-proportion[1][7] <- t2 %>% proportion_equals_x(6, geq = TRUE)
-
-proportion_female <- t2 %>% 
-  filter(woman == 1) %>% 
-  count() / count(t2)
-
-# gt(data.frame(proportion, row.names = c(
-# 	"Proportion who have 0 children","1 children",
-# 	"2 children", "3 children",
-# 	"4 children", "5 Children", "6 Children or More")))
-
-
+# taken from given replication file
+library(Zelig)
+# library("ZeligChoice")
+library(xtable)		
+library(reshape)
+library(apsrtable)
+library(stargazer)
+library(rms)
 
 ```
+```{r xtable, results="asis"}
+
+sim <- Zelig:::sim
+
+cl   <- function(dat,fm, cluster){
+           require(sandwich, quietly = TRUE)
+           require(lmtest, quietly = TRUE)
+           M <- length(unique(cluster))
+           N <- length(cluster)
+           K <- fm$rank
+           dfc <- (M/(M-1))*((N-1)/(N-K))
+           uj  <- apply(estfun(fm),2, function(x) tapply(x, cluster, sum));
+           vcovCL <- dfc*sandwich(fm, meat=crossprod(uj)/N)
+           coeftest(fm, vcovCL) }
+           
+           
+           
+########################################################
+## Loading the Data
+########################################################
+
+## This loads three data sets
+## 1. Gender cases
+## 2. Cleaned by-judge data
+## 3. Non-gender cases, downloaded from Kuersten and Haire's website
+## (Commented out; their data are available from their website)
+
+# ## Gender cases only
+ women.cases <- read_csv("dataverse_files/glynn_sen_daughters_by_case_1.csv") %>% clean_names() 
+
+# ## Removing male plaintiffs:
+ women.cases <- subset(women.cases, femplaintiff == 1)
+
+ women.cases <- subset(women.cases, area == "employment" | area == "Title IX" | area == "pregnancy" | area == "abortion" | area == "reproductive rights")
+
+ women.cases$area <- factor(women.cases$area, levels = c("abortion","employment","pregnancy","reproductive rights","Title IX"))
+
+# ## All cases, including non-gender cases (from Ashlyn Kuersten/Susan Haire's coding)
+# cases <- read.csv("cases.for.analysis.csv")	
+
+judge.means <- read_csv("dataverse_files/glynn_sen_daughters_by_judge.csv") %>% clean_names()
+
+all <- subset(judge.means, girls != "NaN") # subsets judge
+								  # data to those for 
+								  # whom we have fertility data
+
+######################################################
+## Table 1: Number of children and girls
+######################################################
+aa <- table(all$republican, all$child)
+bb <- table(all$republican, all$girls)
+
+## and now for the table:
+
+xtable(aa)
+xtable(bb)
+
+```
+```{r, results="asis"}
+########################################################
+## Table 2: Judge Demographics
+########################################################
+
+dems <- subset(all, republican == 0)
+reps <- subset(all, republican == 1)
+women <- subset(all, woman == 1)
+men <- subset(all, woman == 0)
+
+
+mean.kids <-  cbind(mean(na.omit(all$child)), 
+		mean(na.omit(dems$child)),
+		mean(na.omit(reps$child)),
+		mean(na.omit(women$child)),
+		mean(na.omit(men$child))
+	)
+
+mean.girls <- cbind(mean(na.omit(all$girls)), 
+		mean(na.omit(dems$girls)),
+		mean(na.omit(reps$girls)),
+		mean(na.omit(women$girls)),
+		mean(na.omit(men$girls))
+	)
+
+prop.zero <- cbind(prop.table(table(na.omit(all$child)))[1],
+prop.table(table(na.omit(dems$child)))[1],
+prop.table(table(na.omit(reps$child)))[1],
+prop.table(table(na.omit(women$child)))[1],
+prop.table(table(na.omit(men$child)))[1]
+	)
+	
+	
+prop.one <- cbind(prop.table(table(na.omit(all$child)))[2],
+prop.table(table(na.omit(dems$child)))[2],
+prop.table(table(na.omit(reps$child)))[2],
+prop.table(table(na.omit(women$child)))[2],
+prop.table(table(na.omit(men$child)))[2]
+	)
+	
+prop.two <- cbind(prop.table(table(na.omit(all$child)))[3],
+prop.table(table(na.omit(dems$child)))[3],
+prop.table(table(na.omit(reps$child)))[3],
+prop.table(table(na.omit(women$child)))[3],
+prop.table(table(na.omit(men$child)))[3]
+	)
+
+prop.three <- cbind(prop.table(table(na.omit(all$child)))[4],
+prop.table(table(na.omit(dems$child)))[4],
+prop.table(table(na.omit(reps$child)))[4],
+prop.table(table(na.omit(women$child)))[4],
+prop.table(table(na.omit(men$child)))[4]
+	)
+
+prop.four <- cbind(prop.table(table(na.omit(all$child)))[5],
+prop.table(table(na.omit(dems$child)))[5],
+prop.table(table(na.omit(reps$child)))[5],
+prop.table(table(na.omit(women$child)))[5],
+prop.table(table(na.omit(men$child)))[5]
+	)
+
+prop.five <- cbind(prop.table(table(na.omit(all$child)))[6],
+prop.table(table(na.omit(dems$child)))[6],
+prop.table(table(na.omit(reps$child)))[6],
+prop.table(table(na.omit(women$child)))[6],
+prop.table(table(na.omit(men$child)))[6]
+	)
+	
+aa <- table(na.omit(all$child))
+	plus6.all <- sum(aa[7:length(aa)])/sum(aa)
+	
+bb <- table(na.omit(dems$child))
+	plus6.dems <- sum(bb[7:length(bb)])/sum(bb)
+
+cc <- table(na.omit(reps$child))
+	plus6.reps <- sum(cc[7:length(cc)])/sum(cc)
+
+dd <- table(na.omit(women$child))
+	plus6.women <- sum(dd[7:length(dd)])/sum(dd)
+
+ee <- table(na.omit(men$child))
+	plus6.men <- sum(ee[7:length(ee)])/sum(ee)
+	
+prop.six.or.greater <- cbind(plus6.all, plus6.dems, plus6.reps, plus6.women, plus6.men)
+	
+mean.female <- cbind(mean(na.omit(all$woman)), 
+		mean(na.omit(dems$woman)),
+		mean(na.omit(reps$woman)),
+		mean(na.omit(women$woman)),
+		mean(na.omit(men$woman))
+	)
+	
+mean.rep <- cbind(mean(na.omit(all$republican)), 
+		mean(na.omit(dems$republican)),
+		mean(na.omit(reps$republican)),
+		mean(na.omit(women$republican)),
+		mean(na.omit(men$republican))
+)
+
+
+mean.white <- cbind(mean(na.omit(all$race == 1)), 
+		mean(na.omit(dems$race == 1)),
+		mean(na.omit(reps$race == 1)),
+		mean(na.omit(women$race == 1)),
+		mean(na.omit(men$race == 1))
+	)
+
+mean.yearb <- cbind(mean(na.omit(all$yearb)), 
+		mean(na.omit(dems$yearb)),
+		mean(na.omit(reps$yearb)),
+		mean(na.omit(women$yearb)),
+		mean(na.omit(men$yearb))
+	)
+
+no_judges <- cbind(nrow(all), nrow(dems), nrow(reps), nrow(women), nrow(men))
+
+demographic_table <- rbind(mean.kids, mean.girls, prop.zero, prop.one,
+	prop.two, prop.three, prop.four, prop.five, prop.six.or.greater, mean.female, mean.rep, mean.white, mean.yearb, no_judges)
+
+colnames(demographic_table) <- c("All", "Democrats", "Republicans","Women", "Men")
+rownames(demographic_table) <- c("Mean No. Children", "Mean No. Girls",
+	"Proportion who have 0 children","1 children",
+	"2 children", "3 children",
+	"4 children", "5 Children", "6 Children or More", "Proportion Female", "Proportion Republican",
+	"Proportion White", "Mean Year Born", "N")
+xtable(demographic_table, digits = 2, caption = "Demographics of U.S. Court of Appeal Judges who voted on gender-related cases (1996-2002)", label = "t:statsgender", align = "l|ccccc")
+
+########################################################
+## Calculating the Weights (Number of Cases)
+########################################################
+
+no_cases <- matrix(data = NA, nrow = nrow(judge.means), ncol = 1)
+for(i in 1:length(no_cases)){
+	no_cases[i] <- nrow(women.cases[which(women.cases$name == judge.means$name[i]),])
+	}
+
+judge.means <- cbind(judge.means, no_cases)
+
+## total number of cases we are working with
+
+sum(judge.means$no_cases) 	# should be 2,674 reported in the paper
+
+########################################################
+## Calculating the Outcome Var
+########################################################
+
+no_liberalvote <- matrix(data = NA, nrow = nrow(judge.means), ncol = 1)
+for(i in 1:length(no_liberalvote)){
+	stuff <- women.cases[which(women.cases$name == judge.means$name[i]),]
+	no_liberalvote[i] <- nrow(subset(stuff, vote == 2 | vote == 3))
+	}
+
+lib_vote_share <- no_liberalvote/no_cases
+
+judge.means <- cbind(judge.means, no_liberalvote, lib_vote_share)
+judge.means <- subset(judge.means, girls != "NaN")
+
+########################################################
+## Subsetting Data to Various Populations (for use later)
+########################################################
+
+## just women:
+women.means <- subset(judge.means, woman == 1)
+
+## just men:
+men.means <- subset(judge.means, woman == 0)
+
+## just republicans:
+rep.means <- subset(judge.means, republican == 1)
+
+## just democrats
+dem.means <- subset(judge.means, republican == 0)
+
+
+#######################################################
+## Figure 1
+########################################################
+
+#pdf(file= "lib_votes.pdf", width = 5, height = 5, family = "Helvetica", pointsize = 10)
+plot(density(judge.means$lib_vote_share), 
+	xlim = c(-.4,1.4), ylim = c(0,2.5),
+	ylab = "", xlab = "Proportion of Cases Decided in a Feminist Direction", 
+	yaxt = "n", 
+	bty = "n", 
+	main = "",
+	col = "black", lwd = 2)
+lines(density(rep.means$lib_vote_share), 
+	col = "firebrick", lwd = 2, lty  = 2)
+lines(density(dem.means$lib_vote_share), 
+	col = "dodgerblue", lwd = 2, lty  = 3)
+abline(v = .5, col = "grey50", lty = 2)
+text(x = .5, y = 2.4, "Less Feminist", col = "grey50", pos = 2, cex = 0.9)
+text(x = .5, y = 2.4, "More Feminist", col = "grey50", pos = 4, cex = 0.9)
+text(x = .25, y = 1.7, "Republicans", pos = 2, cex = 0.9)
+text(x = .7, y = 1, "Democrats", pos = 4, cex = 0.9)
+text(x = .075, y = .6, "All", pos = 4, cex = 0.9)
+#dev.off()
+
+
 ```
 
-t2 %>% 
-  group_by(woman) %>% 
-  summarize(
-    mean_child = mean(child, na.rm = TRUE),
-    mean_girls = mean(girls, na.rm = TRUE),
-    mean_yearb = mean(yearb, na.rm = TRUE)
-  )
 
-t2 %>% 
-  group_by(republican) %>% 
-  summarize(
-    mean_child = mean(child, na.rm = TRUE),
-    mean_girls = mean(girls, na.rm = TRUE),
-    mean_yearb = mean(yearb, na.rm = TRUE)
-  ) 
+```{r, results="asis"}
 
 
+#######################################################
+## Table 3: Distribution of Cases
+########################################################
 
-kable(t2, caption = "Demographics of U.S. Courts of Appeals Judges Who Voted on Gender-Related Cases, 1996-2002")
+gg <- rbind (summary(judge.means$no_cases), summary(dem.means$no_cases), summary(rep.means$no_cases))
+rownames(gg) <- c("All Judges", "Democrats", "Republicans")
+xtable(gg, caption = "Distribution of the number of gender-related cases heard per judge, 1996-2002.", label = "t:number_cases1")
+
+
 
 ```
+
+
 
