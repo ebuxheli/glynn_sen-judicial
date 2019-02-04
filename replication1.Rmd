@@ -353,13 +353,18 @@ stargazer(my.out1, my.out2, my.out3, my.out4, my.out5, my.out6, my.out7, my.out8
 # DO ALL EXCEPT COLUMN 6 OF THIS ONE
 # also had problems but might not be so bad -> look at filtering and selecting?
 
+# it seems like Mark suggested that we do this one using the built in 
+# packages, instead of using this Zelig code.
+
+
 #######################################################
 ## Table 6: Comparison for Non-Gender Related Cases
 #######################################################
 
 # WE DO NOT DO THIS ONE
 
-
+```
+```{r, results="asis"}
 ########################################################
 ## Table 7: Dividing Up the Sample
 ########################################################
@@ -429,6 +434,79 @@ stargazer(my.outREP, my.outDEM, my.outMEN, my.outWOMEN, my.outREPMEN,
 	style = "ajps", omit.stat = c("f","ser"), dep.var.labels = "Share of Votes in Feminist Direction", digits = 2, covariate.labels = c("At Least 1 Girl", "2 Children", "3 Children", "4 Children","Constant"), title = "Weighted least squares results. Outcome is judges' proportion of feminist votes on gender-related cases. All models include fixed effects for total number of children and use weights based on the number of cases heard by each judge.", label = "t:results_party")
 
 ```
+```{r, results="asis"}
+
+
+
+```
+
+
+```{r, results="asis"}
+
+
+########################################################
+## Table 8: Judges with 0 or 1 child
+########################################################
+
+## Including people who have zero children as a control 
+## suggested by AJPS editor 
+## (Note: Caution against making inferences on effect of
+## daughters among people with 0 children)
+
+my.out12 <- lm(lib_vote_share ~ I(girls > 0) + as.factor(child), 
+	data = subset(judge.means, child < 2), 
+		weights = judge.means$no_cases[which(judge.means$child < 2)])
+summary(my.out12)
+
+my.out13 <- lm(lib_vote_share ~ I(girls > 0), 
+	data = subset(judge.means, child == 1), 
+		weights = judge.means$no_cases[which(judge.means$child == 1)])
+summary(my.out13)
+
+## and then controlling for rep or dem:
+
+my.out14 <- lm(lib_vote_share ~ I(girls > 0) + I(republican==1), 
+	data = subset(judge.means, child == 1), 
+		weights = judge.means$no_cases[which(judge.means$child == 1)])
+summary(my.out14)
+
+
+stargazer(my.out12, my.out13, my.out14, 
+	style = "ajps", omit.stat = c("f","ser"), dep.var.labels = "Liberal Judge-Vote")
+
+
+
+
+
+```
+```{r, results="asis"}
+
+########################################################
+## Table 9: Distribution of gender-related cases
+########################################################
+
+
+## just republicans:
+rep.means <- subset(judge.means, republican == 1)
+
+## just democrats
+dem.means <- subset(judge.means, republican == 0)
+
+
+
+aa <- table(dem.means$child, dem.means$girl)
+bb <- table(rep.means$child, rep.means$girl)
+
+aa.1 <- prop.table(table(dem.means$child, dem.means$girl),1)
+bb.1 <- prop.table(table(rep.means$child, rep.means$girl),1)
+
+colnames(aa.1) <- c("0 Girls", "1 Girl", "2 Girls", "3 Girls", "4 Girls", "5 Girls")
+
+colnames(bb.1) <- c("0 Girls", "1 Girl", "2 Girls", "3 Girls", "4 Girls")
+
+xtable(cbind(aa.1, bb.1))
+```
+
 
 
 
