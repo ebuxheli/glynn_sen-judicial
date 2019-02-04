@@ -120,3 +120,4 @@ t2 %>%
 kable(t2, caption = "Demographics of U.S. Courts of Appeals Judges Who Voted on Gender-Related Cases, 1996-2002")
 
 ```
+
