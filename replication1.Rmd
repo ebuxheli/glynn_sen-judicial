@@ -305,6 +305,9 @@ xtable(gg, caption = "Distribution of the number of gender-related cases heard p
 ## Table 4: Core Results (WLS) 
 ########################################################
 
+## Note from John: had to change as.factor(circuit.1) to as.factor(circuit_1), 
+# because of the way that Zelig changed how they handle renaming duplicate 
+# columns of info
 
 ################ Results for all judges
 
