@@ -298,6 +298,95 @@ rownames(gg) <- c("All Judges", "Democrats", "Republicans")
 xtable(gg, caption = "Distribution of the number of gender-related cases heard per judge, 1996-2002.", label = "t:number_cases1")
 
 
+```
+
+```{r, results="asis"}
+########################################################
+## Table 4: Core Results (WLS) 
+########################################################
+
+## THIS HAD PROBLEMS FROM COPY/PASTE, TO BE LOOKED AT
+
+#######################################################
+## Table 5: Core Results (Case-Level)
+#######################################################
+
+# also had problems but might not be so bad -> look at filtering and selecting?
+
+#######################################################
+## Table 6: Comparison for Non-Gender Related Cases
+#######################################################
+
+# relies on cases object from earlier on
+
+
+########################################################
+## Table 7: Dividing Up the Sample
+########################################################
+
+## First, limiting sample space to only judges 
+## with 1-4 kids 
+#(there is only 1 judge with no girls conditional on 5 or more kids)
+
+#judge.means <- subset(judge.means, child < 5 & child > 0)
+rep.means <- subset(rep.means, child < 5 & child > 0)
+dem.means <- subset(dem.means, child < 5 & child >0)
+men.means <- subset(men.means, child < 5 & child > 0)
+women.means <- subset(women.means, child < 5 & child > 0)
+
+## and then by case
+rep.cases <- subset(women.cases, child < 5 & child > 0 & republican == 1)
+dem.cases <- subset(women.cases, child < 5 & child > 0 & republican == 0)
+men.cases <- subset(women.cases, woman == 0)
+womyn.cases <- subset(women.cases, woman == 1)
+
+
+################ Party
+
+my.outPARTY <- lm(lib_vote_share ~ I(girls > 0)*republican + as.factor(child), 
+	data = judge.means, weights = judge.means$no_cases)
+summary(my.outPARTY)
+
+## for republicans
+
+my.outREP <- lm(lib_vote_share ~ I(girls > 0) + as.factor(child), 
+	data = rep.means, weights = rep.means$no_cases)
+summary(my.outREP)
+
+
+## for democrats
+
+my.outDEM <- lm(lib_vote_share ~ I(girls > 0) + as.factor(child), 
+	data = dem.means, weights = dem.means$no_cases)
+summary(my.outDEM)
+
+################ Gender
+
+## for men
+	
+my.outGENDER <- lm(lib_vote_share ~ I(girls > 0)*woman + as.factor(child), 
+	data = judge.means, weights = judge.means$no_cases)
+summary(my.outGENDER)
+
+## for men
+	
+my.outMEN <- lm(lib_vote_share ~ I(girls > 0) + as.factor(child), 
+	data = men.means, weights = men.means$no_cases)
+summary(my.outMEN)
+
+## for women
+
+my.outWOMEN <- lm(lib_vote_share ~ I(girls > 0) + as.factor(child), 
+	data = women.means, weights = women.means$no_cases)
+summary(my.outWOMEN)
+
+my.outREPMEN <- lm(lib_vote_share ~ I(girls > 0) + as.factor(child), 
+	data = subset(men.means, republican == 1), weights = men.means$no_cases[which(men.means$republican == 1)])
+summary(my.outREPMEN)
+
+
+stargazer(my.outREP, my.outDEM, my.outMEN, my.outWOMEN, my.outREPMEN,
+	style = "ajps", omit.stat = c("f","ser"), dep.var.labels = "Share of Votes in Feminist Direction", digits = 2, covariate.labels = c("At Least 1 Girl", "2 Children", "3 Children", "4 Children","Constant"), title = "Weighted least squares results. Outcome is judges' proportion of feminist votes on gender-related cases. All models include fixed effects for total number of children and use weights based on the number of cases heard by each judge.", label = "t:results_party")
 
 ```
 
