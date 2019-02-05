@@ -37,10 +37,12 @@ t1 <- select(judge_data,
   filter(child < 10, girls < 10) %>% 
   mutate(party = ifelse(1 == republican, "Republicans", "Democrats"))
 
+
 # Number of Children portion of the table
 t1_child <- t1 %>% 
   count(party, child) %>% 
-  spread(child, n)
+  spread(child, n) %>% 
+  adorn_totals("col")
 
 # Number of Girls portion of the table
 t1_girls <- t1 %>% 
@@ -49,7 +51,8 @@ t1_girls <- t1 %>%
 
 # Binding the rows to create one table with girls and children
 t1_combined <- bind_rows(t1_child, t1_girls) %>% 
-  kable("latex", booktabs = T) %>% column_spec(1, bold = T)
+  kable("latex", booktabs = TRUE) %>% 
+  column_spec(1, bold = TRUE)
 
 # Styling the table to make it look like the original figure
 t1_combined %>% 
