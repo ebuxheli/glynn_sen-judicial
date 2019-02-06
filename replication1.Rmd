@@ -31,7 +31,7 @@ options(knitr.kable.NA = '-')
 options(xtable.comment = FALSE)
 ```
 
-# Table 1
+
 ```{r xtable, results="asis"}
 
 # Creating judge and case data to be used for tables in the replication.
@@ -70,6 +70,8 @@ all <- subset(judge_data, girls != "NaN") # subsets judge
 								  # whom we have fertility data
 
 ```
+
+# Table 1: Number of Children and Girls for U.S. Courts of Appeals Judges Participating in Gender-Related Cases, 1996-2002
 ```{r, results="asis"}
 ######################################################
 ## Table 1: Number of children and girls
@@ -95,32 +97,31 @@ t1_child <- t1 %>%
 # Number of Girls portion of the table
 t1_girls <- t1 %>% 
   count(party, girls) %>% 
-  spread(girls, n)
+  spread(girls, n) %>% 
+  adorn_totals("col")
 
 # Binding the rows to create one table with girls and children
-t1_combined <- bind_rows(t1_child, t1_girls) %>% 
-  kable("latex", booktabs = TRUE) %>% 
-  column_spec(1, bold = TRUE)
-
-# Styling the table to make it look like the original figure
+# column_spec is a function that adds the row with the total counts
+t1_combined <- bind_rows(t1_child, t1_girls)
+colnames(t1_combined) <- c("Count", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "N")
 t1_combined %>% 
+  kable("latex", booktabs = TRUE, col.names = ) %>% kable_styling(position = "center") %>% 
+  column_spec(1, bold = TRUE) %>% 
   group_rows("Number of Children", 1, 2, bold = TRUE) %>% 
-  group_rows("Number of Girls", 3, 4, hline_before = T)
-
-
+  group_rows("Number of Girls", 3, 4, hline_before = TRUE)
 ```
 
 \newpage
-# Table 2
+# Table 2: Demographics of U.S. Courts of Appeals Judges Who Voted on Gender-Related Cases, 1996-2002
 ```{r, results="asis"}
 ########################################################
 ## Table 2: Judge Demographics
 ########################################################
 
-dems <- subset(all, republican == 0)
-reps <- subset(all, republican == 1)
+dems  <- subset(all, republican == 0)
+reps  <- subset(all, republican == 1)
 women <- subset(all, woman == 1)
-men <- subset(all, woman == 0)
+men   <- subset(all, woman == 0)
 
 
 mean_kids <-  cbind(mean(na.omit(all$child)), 
@@ -237,8 +238,12 @@ rownames(demographic_table) <- c("Mean No. Children", "Mean No. Girls",
 	"2 children", "3 children",
 	"4 children", "5 Children", "6 Children or More", "Proportion Female", "Proportion Republican",
 	"Proportion White", "Mean Year Born", "N")
-xtable(demographic_table, digits = 2, caption = "Demographics of U.S. Court of Appeal Judges who voted on gender-related cases (1996-2002)", label = "t:statsgender", align = "l|ccccc")
+xtable(demographic_table, digits = 2, label = "t:statsgender", align = "l|ccccc")
+
+row.names = NA
 ```
+
+
 ```{r}
 ########################################################
 ## Calculating the Weights (Number of Cases)
@@ -289,12 +294,13 @@ dem_means <- subset(judge_data, republican == 0)
 ## for example, this code is used in Figure 1, table 3
 
 ```
+
+# Figure 1: Distribution of the Proportion of Cases Decided in a Feminist Direction out of All Gender-Related Cases Decided, 1996-2002
 ```{r}
 #######################################################
 ## Figure 1
 ########################################################
 
-#pdf(file= "lib_votes.pdf", width = 5, height = 5, family = "Helvetica", pointsize = 10)
 plot(density(judge_data$lib_vote_share), 
 	xlim = c(-.4,1.4), ylim = c(0,2.5),
 	ylab = "", xlab = "Proportion of Cases Decided in a Feminist Direction", 
@@ -312,26 +318,29 @@ text(x = .5, y = 2.4, "More Feminist", col = "grey50", pos = 4, cex = 0.9)
 text(x = .25, y = 1.7, "Republicans", pos = 2, cex = 0.9)
 text(x = .7, y = 1, "Democrats", pos = 4, cex = 0.9)
 text(x = .075, y = .6, "All", pos = 4, cex = 0.9)
-#dev.off()
-
 
 ```
 
 
 \newpage
-# Table 3
+# Table 3: Distribution of the Number of Gender-Related Cases Heard per Judge, 1996-2002
 ```{r, results="asis"}
-
-
 #######################################################
 ## Table 3: Distribution of Cases
 ########################################################
 
-gg <- rbind (summary(judge_data$no_cases), summary(dem_means$no_cases), summary(rep_means$no_cases))
+# binding summary statistics for different parties
+gg <- rbind(summary(judge_data$no_cases), 
+            summary(dem_means$no_cases), 
+            summary(rep_means$no_cases))
+
+# making party names more aesthetically pleasing
 rownames(gg) <- c("All Judges", "Democrats", "Republicans")
-xtable(gg, caption = "Distribution of the number of gender-related cases heard per judge, 1996-2002.", label = "t:number_cases1")
 
-
+# feeding the results into a table
+gg %>% 
+  kable(digits = 2, booktabs = TRUE) %>% 
+  kable_styling(position = "center")
 ```
 
 
