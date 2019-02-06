@@ -385,6 +385,9 @@ stargazer(mod_1, mod_2, mod_3, mod_4, mod_5, mod_6, mod_7, mod_8, header = FALSE
 ```
 
 \newpage
+
+"Logit and ordered logit results, gender cases only. Outcome is whether judge in a case votes in a feminist direction (Columns 1--5) or in a conservative, moderate, or liberal direction (Column 6).  All models include fixed effects for total number of children and Columns 3--6 include circuit and year fixed effects. Column 5 additionally includes standard errors clustered at the case level
+
 # Table 5
 ```{r, results="asis"}
 #######################################################
@@ -405,69 +408,99 @@ mod_7 <- glm(progressive_vote ~ as.factor(girls) + as.factor(child), data = wom_
 mod_8 <- glm(progressive_vote ~ I(girls > 0) + as.factor(child), data = wom_cases, family = binomial)
 mod_9 <- glm(progressive_vote ~ I(girls>0) + as.factor(child) + republican + age + I(religion == 4) + woman + I(race == 2) + I(race ==3) + as.factor(circuit) + as.factor(year), data = wom_cases, family = binomial)
 mod_10 <- glm(progressive_vote ~ I(girls>0) + as.factor(child) + republican + age + I(religion == 4) + woman + I(race == 2) + I(race == 3) + as.factor(circuit) + as.factor(year) + as.factor(area), data = wom_cases, family = binomial)
-mod_11 <- glm(progressive_vote ~ I(girls>0) + as.factor(child) + republican + age + I(religion == 4) + woman + I(race == 2) + I(race == 3) + as.factor(circuit) + as.factor(year) + as.factor(area), data = wom_cases, family = binomial)
+my.out11 <- glm(progressive_vote ~ I(girls>0) + as.factor(child) + republican + age + I(religion == 4) + woman + I(race == 2) + I(race == 3) + as.factor(circuit) + as.factor(year) + as.factor(area), data = wom_cases, family = binomial)
 
 
-stargazer(type = "latex", mod_7, mod_8, mod_9, mod_10, mod_11, header = FALSE, var.labels = "Logit and ordered logit results, gender cases only. Outcome is whether judge in a case votes in a feminist direction (Columns 1--5) or in a conservative, moderate, or liberal direction (Column 6).  All models include fixed effects for total number of children and Columns 3--6 include circuit and year fixed effects. Column 5 additionally includes standard errors clustered at the case level", covariate.labels = c("1 Girl","2 Girls","3 Girls","At Least 1 Girl",
-	"2 Children","3 Children","4 Children","Republican","Age at Investiture","Catholic","Woman",	
-	"African American","Hispanic", "10th Cir", "11th Cir","2nd Cir","3rd Cir",
-	"4th Cir","5th Cir","6th Cir","7th Cir","8th Cir","9th Cir","DC","1997","1998","1999","2000","2001","2002",
-	"Employment","Pregnancy","Reproduction","Title IX","Constant"),digits = 2)
-
-
-# # 
-# # ## Now: Calculating standard errors bootstrapped at the case level:
-# # ## Note: This takes about 10 minutes to run. 
-# # 
-# # ## Grab the data for these two models
-# # mod12 <- as.formula("~ progressive.vote + vote + girls +  child + republican +race + age + religion + woman + circuit + year + area + casename")
-# # dat12 <- model.frame(mod12, data = subset(women_cases, child < 5 & child > 0))
-# # dat12$casename <- as.character(dat12$casename)
-# 
-# ## Create list of data.frames for each case for easy reference
-# casenames <- sort(unique(dat12$casename))
-# caselist <- lapply(casenames, function(x) dat12[which(dat12$casename == x),])
-# names(caselist) <- casenames
-# 
-## Running the bootstraps
-## Note that not all of the coefficients will be sampled in any given of the
-## bootstraps - this might result in some warnings form polr
-## (the ordered logit), but is not a problem for the results
-# 
-# boots <- 1000
-# b.star11 <- matrix(NA, ncol =length(my.out11$result$coef), nrow = boots)
-# colnames(b.star11) <- names(my.out11$result$coef)
-# b.star12 <- matrix(NA, ncol =length(my.out12$result$coef), nrow = boots)
-# colnames(b.star12) <- names(my.out12$result$coef)
-# set.seed(1234)
-# for (b in 1:boots) {
-# 	if ((b%%10) == 0) cat("boot: ", b, "\n")
-# 	clust.sample <- sample(casenames, replace = TRUE)
-# 	c.boot <- do.call(rbind,lapply(clust.sample,function(x) caselist[[x]]))
-# 	out11.star <- glm(progressive.vote ~ I(girls>0) + as.factor(child) + republican 
-# 	+ age + I(religion == 4) + woman + I(race == 2) + I(race == 3) + as.factor(circuit) + as.factor(year) + as.factor(area), data = c.boot, family = binomial("logit"))
-#     out12.star <- polr(as.factor(vote) ~ I(girls>0) + as.factor(child) + republican + age + I(religion == 4) + woman + I(race == 2) + I(race ==3) + as.factor(circuit) + as.factor(year) + as.factor(area), data = c.boot)	
-#   b.star11[b,names(out11.star$coef)] <- out11.star$coef
-# 	b.star12[b,names(out12.star$coef)] <- out12.star$coef
-# 		}
-# bcse11 <- apply(b.star11, 2, sd, na.rm=TRUE)		
-# bcse12 <- apply(b.star12, 2, sd, na.rm=TRUE)		
-# #save(list=c("bcse11", "bcse12"), file = "bootstraps.RData")
-# ## End bootstrap code here
-# 
-
-## can re-load bootstraped data to avoid having to run previous code
-## load("bootstraps.RData")
-
-## Replacing the normal SEs with the bootstrap SEs for the final Table 5
-# stargazer(my.out7, my.out8, my.out9, my.out10, my.out11, my.out12, 
-# 	style = "ajps", omit.stat = c("f","ser"), dep.var.labels = "Logit and ordered logit results, gender cases only. Outcome is whether judge in a case votes in a feminist direction (Columns 1--5) or in a conservative, moderate, or liberal direction (Column 6).  All models include fixed effects for total number of children and Columns 3--6 include circuit and year fixed effects. Column 5 additionally includes standard errors clustered at the case level", covariate.labels = c("1 Girl","2 Girls","3 Girls","At Least 1 Girl",
+# stargazer(type = "latex", mod_7, mod_8, mod_9, mod_10, mod_11, header = FALSE, var.labels = "Logit and ordered logit results, gender cases only. Outcome is whether judge in a case votes in a feminist direction (Columns 1--5) or in a conservative, moderate, or liberal direction (Column 6).  All models include fixed effects for total number of children and Columns 3--6 include circuit and year fixed effects. Column 5 additionally includes standard errors clustered at the case level", covariate.labels = c("1 Girl","2 Girls","3 Girls","At Least 1 Girl",
 # 	"2 Children","3 Children","4 Children","Republican","Age at Investiture","Catholic","Woman",	
 # 	"African American","Hispanic", "10th Cir", "11th Cir","2nd Cir","3rd Cir",
 # 	"4th Cir","5th Cir","6th Cir","7th Cir","8th Cir","9th Cir","DC","1997","1998","1999","2000","2001","2002",
-# 	"Employment","Pregnancy","Reproduction","Title IX","Constant"),se = list(my.out7 = NULL, my.out8 = NULL, my.out8 = NULL, my.out10 = NULL,my.out11 = bcse11, my.out12 = bcse12), digits = 2)
+# 	"Employment","Pregnancy","Reproduction","Title IX","Constant"),digits = 2)
 # 
+
+## Now: Calculating standard errors bootstrapped at the case level:
+## Note: This takes about 10 minutes to run. 
+
+## Grab the data for these two models
+mod11 <- as.formula("~ progressive_vote + vote + girls +  child + republican +race + age + religion + woman + circuit + year + area + casename")
+
+dat11 <- model.frame(mod11, data = subset(women_cases, child < 5 & child > 0))
+dat11$casename <- as.character(dat11$casename)
+
+## Create list of data.frames for each case for easy reference
+casenames <- sort(unique(dat11$casename))
+caselist <- lapply(casenames, function(x) dat11[which(dat11$casename == x),])
+names(caselist) <- casenames
+
+
+# in order to run the bootstrap algo, you need to uncomment out from "Running the bootstraps" to "End Bootstrap code here"
+
+# otherwise you can just used the saved data
+
+# # Running the bootstraps
+# # Note that not all of the coefficients will be sampled in any given of the
+# # bootstraps - this might result in some warnings form polr
+# # (the ordered logit), but is not a problem for the results
+# boots <- 1000
+# b.star11 <- matrix(NA, ncol = length(list("(Intercept)",        "I(girls > 0)TRUE", "as.factor(child)2"   , "as.factor(child)3"   ,
+# "as.factor(child)4"        ,          "republican"           ,
+#  "age"                             ,   "I(religion == 4)TRUE"          ,
+#  "woman"                ,              "I(race == 2)TRUE"             ,
+#  "I(race == 3)TRUE"               ,    "as.factor(circuit)10"          ,
+#  "as.factor(circuit)11"           ,    "as.factor(circuit)2"          ,
+#  "as.factor(circuit)3"             ,   "as.factor(circuit)4"             ,
+# "as.factor(circuit)5"              ,  "as.factor(circuit)6"            ,
+#  "as.factor(circuit)7"               , "as.factor(circuit)8"           ,
+#  "as.factor(circuit)9"      ,          "as.factor(circuit)DC"         ,
+# "as.factor(year)1997"       ,         "as.factor(year)1998"         ,
+#  "as.factor(year)1999"        ,        "as.factor(year)2000"        ,
+#  "as.factor(year)2001"         ,       "as.factor(year)2002"       ,
+# "as.factor(area)employment"    ,      "as.factor(area)pregnancy" ,
+#  "as.factor(area)reproductive rights", "as.factor(area)Title IX" )), nrow = boots)
+# colnames(b.star11) <- list("(Intercept)",        "I(girls > 0)TRUE", "as.factor(child)2"   , "as.factor(child)3"   ,
+# "as.factor(child)4"        ,          "republican"           ,
+#  "age"                             ,   "I(religion == 4)TRUE"          ,
+#  "woman"                ,              "I(race == 2)TRUE"             ,
+#  "I(race == 3)TRUE"               ,    "as.factor(circuit)10"          ,
+#  "as.factor(circuit)11"           ,    "as.factor(circuit)2"          ,
+#  "as.factor(circuit)3"             ,   "as.factor(circuit)4"             ,
+# "as.factor(circuit)5"              ,  "as.factor(circuit)6"            ,
+#  "as.factor(circuit)7"               , "as.factor(circuit)8"           ,
+#  "as.factor(circuit)9"      ,          "as.factor(circuit)DC"         ,
+# "as.factor(year)1997"       ,         "as.factor(year)1998"         ,
+#  "as.factor(year)1999"        ,        "as.factor(year)2000"        ,
+#  "as.factor(year)2001"         ,       "as.factor(year)2002"       ,
+# "as.factor(area)employment"    ,      "as.factor(area)pregnancy" ,
+#  "as.factor(area)reproductive rights", "as.factor(area)Title IX" )
 # 
+# set.seed(1234)
+# for (b in 1:boots) {
+# 	clust.sample <- sample(casenames, replace = TRUE)
+# 	c.boot <- do.call(rbind,lapply(clust.sample,function(x) caselist[[x]]))
+# 	out11.star <- glm(progressive_vote ~ I(girls>0) + as.factor(child) + republican
+# 	+ age + I(religion == 4) + woman + I(race == 2) + I(race == 3) + as.factor(circuit) + as.factor(year) + as.factor(area), data = c.boot, family = binomial("logit"))
+# 	  b.star11[b,names(out11.star$coef)] <- out11.star$coef
+# 	  # b.star11[b,names(out11.star$coef)] <- out11.star$coef
+# 		}
+# bcse11 <- apply(b.star11, 2, sd, na.rm=TRUE)
+# save(list=c("bcse11"), file = "bootstraps.RData")
+
+## End bootstrap code here
+
+
+## can re-load bootstraped data to avoid having to run previous code
+load("bootstraps.RData")
+
+## Replacing the normal SEs with the bootstrap SEs for the final Table 5
+stargazer(mod_7, mod_8, mod_9, mod_10, my.out11,
+	style = "ajps", omit.stat = c("f","ser"), covariate.labels = c("1 Girl","2 Girls","3 Girls","At Least 1 Girl",
+	"2 Children","3 Children","4 Children","Republican","Age at Investiture","Catholic","Woman",
+	"African American","Hispanic", "10th Cir", "11th Cir","2nd Cir","3rd Cir",
+	"4th Cir","5th Cir","6th Cir","7th Cir","8th Cir","9th Cir","DC","1997","1998","1999","2000","2001","2002",
+	"Employment","Pregnancy","Reproduction","Title IX","Constant"),se = list(mod_7 = NULL, mod_8 = NULL, mod_9 = NULL, mod_10 = NULL,my.out11 = bcse11), digits = 2)
+#
+
+
 ```
 
 \newpage
