@@ -249,7 +249,8 @@ rownames(demographic_table) <- c("Mean No. Children", "Mean No. Girls",
 	"4 children", "5 Children", "6 Children or More", "Proportion Female", "Proportion Republican",
 	"Proportion White", "Mean Year Born", "N")
 xtable(demographic_table, digits = 2, caption = "Demographics of U.S. Court of Appeal Judges who voted on gender-related cases (1996-2002)", label = "t:statsgender", align = "l|ccccc")
-
+```
+```{r}
 ########################################################
 ## Calculating the Weights (Number of Cases)
 ########################################################
@@ -263,7 +264,7 @@ judge_data <- cbind(judge_data, no_cases)
 
 ## total number of cases we are working with
 
-sum(judge_data$no_cases) 	# should be 2,674 reported in the paper
+# sum(judge_data$no_cases) 	# should be 2,674 reported in the paper
 
 ########################################################
 ## Calculating the Outcome Var
@@ -296,7 +297,10 @@ rep_means <- subset(judge_data, republican == 1)
 ## just democrats
 dem_means <- subset(judge_data, republican == 0)
 
+## for example, this code is used in Figure 1, table 3
 
+```
+```{r}
 #######################################################
 ## Figure 1
 ########################################################
@@ -349,8 +353,6 @@ xtable(gg, caption = "Distribution of the number of gender-related cases heard p
 # with the same name
 
 ################ Results for all judges
-
-#judge_data <- subset(judge_data, child > 0)
 
 mod_1 <- lm(lib_vote_share ~ as.factor(girls) + as.factor(child), 
 	data = judge_data, weights = judge_data$no_cases)
@@ -427,10 +429,10 @@ stargazer(type = "latex", mod_7, mod_8, mod_9, mod_10, mod_11, header = FALSE, v
 # caselist <- lapply(casenames, function(x) dat12[which(dat12$casename == x),])
 # names(caselist) <- casenames
 # 
-# ## Running the bootstraps
-# ## Note that not all of the coefficients will be sampled in any given of the 
-# ## bootstraps - this might result in some warnings form polr
-# ## (the ordered logit), but is not a problem for the results
+## Running the bootstraps
+## Note that not all of the coefficients will be sampled in any given of the
+## bootstraps - this might result in some warnings form polr
+## (the ordered logit), but is not a problem for the results
 # 
 # boots <- 1000
 # b.star11 <- matrix(NA, ncol =length(my.out11$result$coef), nrow = boots)
@@ -484,7 +486,6 @@ stargazer(type = "latex", mod_7, mod_8, mod_9, mod_10, mod_11, header = FALSE, v
 ## with 1-4 kids 
 #(there is only 1 judge with no girls conditional on 5 or more kids)
 
-#judge_data <- subset(judge_data, child < 5 & child > 0)
 rep_means <- subset(rep_means, child < 5 & child > 0)
 dem_means <- subset(dem_means, child < 5 & child >0)
 men_means <- subset(men_means, child < 5 & child > 0)
@@ -511,7 +512,6 @@ mod_REP <- lm(lib_vote_share ~ I(girls > 0) + as.factor(child),
 
 mod_DEM <- lm(lib_vote_share ~ I(girls > 0) + as.factor(child), 
 	data = dem_means, weights = dem_means$no_cases)
-# summary(my.outDEM)
 
 ################ Gender
 
