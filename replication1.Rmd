@@ -124,62 +124,62 @@ women <- subset(all, woman == 1)
 men   <- subset(all, woman == 0)
 
 
-mean_kids <-  cbind(mean(na.omit(all$child)), 
+mean_kids <-  bind_cols(list(mean(na.omit(all$child)), 
 		mean(na.omit(dems$child)),
 		mean(na.omit(reps$child)),
 		mean(na.omit(women$child)),
-		mean(na.omit(men$child))
+		mean(na.omit(men$child)))
 	)
 
-mean_girls <- cbind(mean(na.omit(all$girls)), 
+mean_girls <- bind_cols(list(mean(na.omit(all$girls)), 
 		mean(na.omit(dems$girls)),
 		mean(na.omit(reps$girls)),
 		mean(na.omit(women$girls)),
 		mean(na.omit(men$girls))
-	)
+	))
 
-prop_zero <- cbind(prop.table(table(na.omit(all$child)))[1],
+prop_zero <- bind_cols(list(prop.table(table(na.omit(all$child)))[1],
 prop.table(table(na.omit(dems$child)))[1],
 prop.table(table(na.omit(reps$child)))[1],
 prop.table(table(na.omit(women$child)))[1],
 prop.table(table(na.omit(men$child)))[1]
-	)
+	))
 	
 	
-prop_one <- cbind(prop.table(table(na.omit(all$child)))[2],
+prop_one <- bind_cols(list(prop.table(table(na.omit(all$child)))[2],
 prop.table(table(na.omit(dems$child)))[2],
 prop.table(table(na.omit(reps$child)))[2],
 prop.table(table(na.omit(women$child)))[2],
 prop.table(table(na.omit(men$child)))[2]
-	)
+	))
 	
-prop_two <- cbind(prop.table(table(na.omit(all$child)))[3],
+prop_two <- bind_cols(list(prop.table(table(na.omit(all$child)))[3],
 prop.table(table(na.omit(dems$child)))[3],
 prop.table(table(na.omit(reps$child)))[3],
 prop.table(table(na.omit(women$child)))[3],
 prop.table(table(na.omit(men$child)))[3]
-	)
+	))
 
-prop_three <- cbind(prop.table(table(na.omit(all$child)))[4],
+prop_three <- bind_cols(list(prop.table(table(na.omit(all$child)))[4],
 prop.table(table(na.omit(dems$child)))[4],
 prop.table(table(na.omit(reps$child)))[4],
 prop.table(table(na.omit(women$child)))[4],
 prop.table(table(na.omit(men$child)))[4]
-	)
+	))
 
-prop_four <- cbind(prop.table(table(na.omit(all$child)))[5],
+prop_four <- bind_cols(list(prop.table(table(na.omit(all$child)))[5],
 prop.table(table(na.omit(dems$child)))[5],
 prop.table(table(na.omit(reps$child)))[5],
 prop.table(table(na.omit(women$child)))[5],
 prop.table(table(na.omit(men$child)))[5]
-	)
+	))
 
-prop_five <- cbind(prop.table(table(na.omit(all$child)))[6],
+prop_five <- bind_cols(list(prop.table(table(na.omit(all$child)))[6],
 prop.table(table(na.omit(dems$child)))[6],
 prop.table(table(na.omit(reps$child)))[6],
 prop.table(table(na.omit(women$child)))[6],
 prop.table(table(na.omit(men$child)))[6]
-	)
+	))
 	
 aa <- table(na.omit(all$child))
 	plus6_all <- sum(aa[7:length(aa)])/sum(aa)
@@ -196,49 +196,53 @@ dd <- table(na.omit(women$child))
 ee <- table(na.omit(men$child))
 	plus6_men <- sum(ee[7:length(ee)])/sum(ee)
 	
-prop_six_or_greater <- cbind(plus6_all, plus6_dems, plus6_reps, plus6_women, plus6_men)
+prop_six_or_greater <- bind_cols(list(plus6_all, plus6_dems, plus6_reps, plus6_women, plus6_men))
 	
-mean_female <- cbind(mean(na.omit(all$woman)), 
+mean_female <- bind_cols(list(mean(na.omit(all$woman)), 
 		mean(na.omit(dems$woman)),
 		mean(na.omit(reps$woman)),
-		mean(na.omit(women$woman)),
-		mean(na.omit(men$woman))
-	)
+		NA_character_, #perfectly correlated (placeholder for Women)
+		NA_character_  #perfectly correlated (placeholder for Men)
+	))
 	
-mean_rep <- cbind(mean(na.omit(all$republican)), 
-		mean(na.omit(dems$republican)),
-		mean(na.omit(reps$republican)),
+mean_rep <- bind_cols(list(mean(na.omit(all$republican)), 
+    NA_character_, #perfectly correlated (placeholder for Democrats)
+    NA_character_, #perfectly correlated (placeholder for Republicans)
 		mean(na.omit(women$republican)),
 		mean(na.omit(men$republican))
-)
+))
 
 
-mean_white <- cbind(mean(na.omit(all$race == 1)), 
+mean_white <- bind_cols(list(mean(na.omit(all$race == 1)), 
 		mean(na.omit(dems$race == 1)),
 		mean(na.omit(reps$race == 1)),
 		mean(na.omit(women$race == 1)),
 		mean(na.omit(men$race == 1))
-	)
+	))
 
-mean_yearb <- cbind(mean(na.omit(all$yearb)), 
+mean_yearb <- bind_cols(list(mean(na.omit(all$yearb)), 
 		mean(na.omit(dems$yearb)),
 		mean(na.omit(reps$yearb)),
 		mean(na.omit(women$yearb)),
 		mean(na.omit(men$yearb))
-	)
+	))
 
-no_judges <- cbind(nrow(all), nrow(dems), nrow(reps), nrow(women), nrow(men))
+no_judges <- bind_cols(list(nrow(all), nrow(dems), nrow(reps), nrow(women), nrow(men)))
 
-demographic_table <- rbind(mean_kids, mean_girls, prop_zero, prop_one,
-	prop_two, prop_three, prop_four, prop_five, prop_six_or_greater, mean_female, mean_rep, mean_white, mean_yearb, no_judges)
+demographic_table <- bind_rows(list(mean_kids, mean_girls, prop_zero, prop_one,
+	prop_two, prop_three, prop_four, prop_five, prop_six_or_greater, mean_female, mean_rep, mean_white, mean_yearb, no_judges))
 
 colnames(demographic_table) <- c("All", "Democrats", "Republicans","Women", "Men")
-rownames(demographic_table) <- c("Mean No. Children", "Mean No. Girls",
-	"Proportion who have 0 children","1 children",
-	"2 children", "3 children",
-	"4 children", "5 Children", "6 Children or More", "Proportion Female", "Proportion Republican",
+rownames(demographic_table) <- c("Mean Number of Children", "Mean Number of Girls",
+	"Proportion Who Have 0 Children","1 Child",
+	"2 Children", "3 Children",
+	"4 Children", "5 Children", "6 Children or More", "Proportion Female", "Proportion Republican",
 	"Proportion White", "Mean Year Born", "N")
-xtable(demographic_table, digits = 2, label = "t:statsgender", align = "l|ccccc")
+
+# creating nicely formatted table
+demographic_table %>% 
+  kable(digits = 2, booktabs = TRUE) %>% 
+  kable_styling(position = "center")
 
 row.names = NA
 ```
