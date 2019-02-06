@@ -505,6 +505,8 @@ names(caselist) <- casenames
 ## can re-load bootstraped data to avoid having to run previous code
 load("bootstraps.RData")
 
+# todo: fix the constant row of this table
+
 ## Replacing the normal SEs with the bootstrap SEs for the final Table 5
 stargazer(mod_7, mod_8, mod_9, mod_10, my.out11, header = FALSE, font.size = "small", type = "latex",
 	 style = "apsr", omit.stat = c("f","ser"), 
