@@ -8,7 +8,7 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE, comment=NA)
 
 # Attaching necessary libraries
 library(tidyverse)
@@ -300,7 +300,7 @@ xtable(gg, caption = "Distribution of the number of gender-related cases heard p
 
 ```
 
-```{r, results="asis"}
+```{r stargazer, results = "asis"}
 ########################################################
 ## Table 4: Core Results (WLS) 
 ########################################################
@@ -339,7 +339,7 @@ my.out7 <- lm(lib_vote_share ~ I(girls>0) + as.factor(child) + republican + age 
 my.out8 <- lm(lib_vote_share ~ I(girls>0) + as.factor(child) + republican + age + I(religion == 4) + woman + I(race == 2) + I(race ==3) + as.factor(circuit_1), 
 	data = subset(judge.means, child < 5 & child > 0), weights = judge.means$no_cases[which(judge.means$child > 0 & judge.means$child < 5)])
 
-stargazer(my.out1, my.out2, my.out3, my.out4, my.out5, my.out6, my.out7, my.out8,
+stargazer(my.out1, my.out2, my.out3, my.out4, my.out5, my.out6, my.out7, my.out8, header = FALSE,
 	style = "ajps", omit.stat = c("f","ser"), dep.var.labels = "Weighted least squares results, gender cases only. Outcome is proportion of feminist votes.  Models 1--4 are for all judges, while Models 5--8 are for judges with 1--4 children.  (No judge among those with 1--4 children had four girls.) All models include fixed effects for number of children and use weights based on the number of cases heard by each judge.", digits = 2, omit = c("circuit"), covariate.labels = c("1 Girl","2 Girls","3 Girls","4 Girls","5 Girls","At Least 1 Girl",	
 	"1 Child","2 Children","3 Children","4 Children","5 Children","6 Children","7 Children","8 Children",
 	"9 Children","Republican","Age at Investiture","Catholic","Woman","African American","Hispanic","Constant"))
@@ -369,8 +369,8 @@ mod_9 <- glm(progressive_vote ~ I(girls>0) + as.factor(child) + republican + age
 mod_10 <- glm(progressive_vote ~ I(girls>0) + as.factor(child) + republican + age + I(religion == 4) + woman + I(race == 2) + I(race == 3) + as.factor(circuit) + as.factor(year) + as.factor(area), data = wom_cases, family = binomial)
 mod_11 <- glm(progressive_vote ~ I(girls>0) + as.factor(child) + republican + age + I(religion == 4) + woman + I(race == 2) + I(race == 3) + as.factor(circuit) + as.factor(year) + as.factor(area), data = wom_cases, family = binomial)
 
-stargazer(mod_7, mod_8, mod_9, mod_10, mod_11, 
-	style = "ajps", omit.stat = c("f","ser"), dep.var.labels = "Logit and ordered logit results, gender cases only. Outcome is whether judge in a case votes in a feminist direction (Columns 1--5) or in a conservative, moderate, or liberal direction (Column 6).  All models include fixed effects for total number of children and Columns 3--6 include circuit and year fixed effects. Column 5 additionally includes standard errors clustered at the case level", covariate.labels = c("1 Girl","2 Girls","3 Girls","At Least 1 Girl",
+
+stargazer(type = "latex", mod_7, mod_8, mod_9, mod_10, mod_11, header = FALSE, var.labels = "Logit and ordered logit results, gender cases only. Outcome is whether judge in a case votes in a feminist direction (Columns 1--5) or in a conservative, moderate, or liberal direction (Column 6).  All models include fixed effects for total number of children and Columns 3--6 include circuit and year fixed effects. Column 5 additionally includes standard errors clustered at the case level", covariate.labels = c("1 Girl","2 Girls","3 Girls","At Least 1 Girl",
 	"2 Children","3 Children","4 Children","Republican","Age at Investiture","Catholic","Woman",	
 	"African American","Hispanic", "10th Cir", "11th Cir","2nd Cir","3rd Cir",
 	"4th Cir","5th Cir","6th Cir","7th Cir","8th Cir","9th Cir","DC","1997","1998","1999","2000","2001","2002",
@@ -494,20 +494,20 @@ womyn.cases <- subset(women.cases, woman == 1)
 
 my.outPARTY <- lm(lib_vote_share ~ I(girls > 0)*republican + as.factor(child), 
 	data = judge.means, weights = judge.means$no_cases)
-summary(my.outPARTY)
+# summary(my.outPARTY)
 
 ## for republicans
 
 my.outREP <- lm(lib_vote_share ~ I(girls > 0) + as.factor(child), 
 	data = rep.means, weights = rep.means$no_cases)
-summary(my.outREP)
+# summary(my.outREP)
 
 
 ## for democrats
 
 my.outDEM <- lm(lib_vote_share ~ I(girls > 0) + as.factor(child), 
 	data = dem.means, weights = dem.means$no_cases)
-summary(my.outDEM)
+# summary(my.outDEM)
 
 ################ Gender
 
@@ -515,27 +515,27 @@ summary(my.outDEM)
 	
 my.outGENDER <- lm(lib_vote_share ~ I(girls > 0)*woman + as.factor(child), 
 	data = judge.means, weights = judge.means$no_cases)
-summary(my.outGENDER)
+# summary(my.outGENDER)
 
 ## for men
 	
 my.outMEN <- lm(lib_vote_share ~ I(girls > 0) + as.factor(child), 
 	data = men.means, weights = men.means$no_cases)
-summary(my.outMEN)
+# summary(my.outMEN)
 
 ## for women
 
 my.outWOMEN <- lm(lib_vote_share ~ I(girls > 0) + as.factor(child), 
 	data = women.means, weights = women.means$no_cases)
-summary(my.outWOMEN)
+# summary(my.outWOMEN)
 
 my.outREPMEN <- lm(lib_vote_share ~ I(girls > 0) + as.factor(child), 
 	data = subset(men.means, republican == 1), weights = men.means$no_cases[which(men.means$republican == 1)])
-summary(my.outREPMEN)
+# summary(my.outREPMEN)
 
 
 stargazer(my.outREP, my.outDEM, my.outMEN, my.outWOMEN, my.outREPMEN,
-	style = "ajps", omit.stat = c("f","ser"), dep.var.labels = "Share of Votes in Feminist Direction", digits = 2, covariate.labels = c("At Least 1 Girl", "2 Children", "3 Children", "4 Children","Constant"), title = "Weighted least squares results. Outcome is judges' proportion of feminist votes on gender-related cases. All models include fixed effects for total number of children and use weights based on the number of cases heard by each judge.", label = "t:results_party")
+	style = "ajps", header = FALSE, omit.stat = c("f","ser"), dep.var.labels = "Share of Votes in Feminist Direction", digits = 2, covariate.labels = c("At Least 1 Girl", "2 Children", "3 Children", "4 Children","Constant"), title = "Weighted least squares results. Outcome is judges' proportion of feminist votes on gender-related cases. All models include fixed effects for total number of children and use weights based on the number of cases heard by each judge.", label = "t:results_party")
 
 ```
 ```{r, results="asis"}
@@ -560,22 +560,22 @@ stargazer(my.outREP, my.outDEM, my.outMEN, my.outWOMEN, my.outREPMEN,
 my.out12 <- lm(lib_vote_share ~ I(girls > 0) + as.factor(child), 
 	data = subset(judge.means, child < 2), 
 		weights = judge.means$no_cases[which(judge.means$child < 2)])
-summary(my.out12)
+# summary(my.out12)
 
 my.out13 <- lm(lib_vote_share ~ I(girls > 0), 
 	data = subset(judge.means, child == 1), 
 		weights = judge.means$no_cases[which(judge.means$child == 1)])
-summary(my.out13)
+# summary(my.out13)
 
 ## and then controlling for rep or dem:
 
 my.out14 <- lm(lib_vote_share ~ I(girls > 0) + I(republican==1), 
 	data = subset(judge.means, child == 1), 
 		weights = judge.means$no_cases[which(judge.means$child == 1)])
-summary(my.out14)
+# summary(my.out14)
 
 
-stargazer(my.out12, my.out13, my.out14, 
+stargazer(my.out12, my.out13, my.out14, header = FALSE, 
 	style = "ajps", omit.stat = c("f","ser"), dep.var.labels = "Liberal Judge-Vote")
 
 
