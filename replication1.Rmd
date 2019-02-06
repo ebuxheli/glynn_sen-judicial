@@ -432,14 +432,6 @@ mod_9 <- glm(progressive_vote ~ I(girls>0) + as.factor(child) + republican + age
 mod_10 <- glm(progressive_vote ~ I(girls>0) + as.factor(child) + republican + age + I(religion == 4) + woman + I(race == 2) + I(race == 3) + as.factor(circuit) + as.factor(year) + as.factor(area), data = wom_cases, family = binomial)
 my.out11 <- glm(progressive_vote ~ I(girls>0) + as.factor(child) + republican + age + I(religion == 4) + woman + I(race == 2) + I(race == 3) + as.factor(circuit) + as.factor(year) + as.factor(area), data = wom_cases, family = binomial)
 
-
-# stargazer(type = "latex", mod_7, mod_8, mod_9, mod_10, mod_11, header = FALSE, var.labels = "Logit and ordered logit results, gender cases only. Outcome is whether judge in a case votes in a feminist direction (Columns 1--5) or in a conservative, moderate, or liberal direction (Column 6).  All models include fixed effects for total number of children and Columns 3--6 include circuit and year fixed effects. Column 5 additionally includes standard errors clustered at the case level", covariate.labels = c("1 Girl","2 Girls","3 Girls","At Least 1 Girl",
-# 	"2 Children","3 Children","4 Children","Republican","Age at Investiture","Catholic","Woman",	
-# 	"African American","Hispanic", "10th Cir", "11th Cir","2nd Cir","3rd Cir",
-# 	"4th Cir","5th Cir","6th Cir","7th Cir","8th Cir","9th Cir","DC","1997","1998","1999","2000","2001","2002",
-# 	"Employment","Pregnancy","Reproduction","Title IX","Constant"),digits = 2)
-# 
-
 ## Now: Calculating standard errors bootstrapped at the case level:
 ## Note: This takes about 10 minutes to run. 
 
@@ -514,7 +506,7 @@ names(caselist) <- casenames
 load("bootstraps.RData")
 
 ## Replacing the normal SEs with the bootstrap SEs for the final Table 5
-stargazer(mod_7, mod_8, mod_9, mod_10, my.out11,
+stargazer(mod_7, mod_8, mod_9, mod_10, my.out11, header = FALSE, 
 	 style = "apsr", omit.stat = c("f","ser"), covariate.labels = c("1 Girl","2 Girls","3 Girls","At Least 1 Girl",
 	"2 Children","3 Children","4 Children","Republican","Age at Investiture","Catholic","Woman",
 	"African American","Hispanic", "10th Cir", "11th Cir","2nd Cir","3rd Cir",
