@@ -353,7 +353,7 @@ gg %>%
 "Weighted least squares results, gender cases only. Outcome is proportion of feminist votes.  Models 1--4 are for all judges, while Models 5--8 are for judges with 1--4 children.  (No judge among those with 1--4 children had four girls.) All models include fixed effects for number of children and use weights based on the number of cases heard by each judge."
 
 
-# Table 4
+# Table 4: Weighted Least Squares Results, Gender-Related Cases Only
 ```{r stargazer, results = "asis"}
 ########################################################
 ## Table 4: Core Results (WLS) 
@@ -391,10 +391,19 @@ mod_7 <- lm(lib_vote_share ~ I(girls>0) + as.factor(child) + republican + age + 
 mod_8 <- lm(lib_vote_share ~ I(girls>0) + as.factor(child) + republican + age + I(religion == 4) + woman + I(race == 2) + I(race ==3) + as.factor(circuit_1), 
 	data = subset(judge_data, child < 5 & child > 0), weights = judge_data$no_cases[which(judge_data$child > 0 & judge_data$child < 5)])
 
-stargazer(mod_1, mod_2, mod_3, mod_4, mod_5, mod_6, mod_7, mod_8, header = FALSE,
-	style = "ajps", omit.stat = c("f","ser"),  column.sep.width = "-8pt", digits = 2, omit = c("circuit"), covariate.labels = c("1 Girl","2 Girls","3 Girls","4 Girls","5 Girls","At Least 1 Girl",	
-	"1 Child","2 Children","3 Children","4 Children","5 Children","6 Children","7 Children","8 Children",
-	"9 Children","Republican","Age at Investiture","Catholic","Woman","African American","Hispanic","Constant"))
+stargazer(mod_1, mod_2, mod_3, mod_4, mod_5, mod_6, mod_7, mod_8, 
+          header = FALSE, style = "apsr", omit.stat = c("f","ser"),  
+          column.sep.width = "-8pt", digits = 2, 
+          omit = c("circuit"), #line to omit descriptors
+          dep.var.labels=c("All Judges","Judges with 1-4 Children"), #attempt at grouping columns
+          covariate.labels = c("1 Girl","2 Girls","3 Girls","4 Girls","5 Girls",
+                               "At Least 1 Girl",	
+                               "1 Child","2 Children","3 Children","4 Children",
+                               "5 Children","6 Children","7 Children","8 Children",
+                               "9 Children",
+                               "Republican","Age at Investiture","Catholic",
+                               "Woman","African American","Hispanic",
+                               "Constant"))
 ```
 
 \newpage
