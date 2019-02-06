@@ -262,8 +262,6 @@ judge_data <- cbind(judge_data, no_cases)
 
 ## total number of cases we are working with
 
-# sum(judge_data$no_cases) 	# should be 2,674 reported in the paper
-
 ########################################################
 ## Calculating the Outcome Var
 ########################################################
