@@ -350,6 +350,8 @@ xtable(gg, caption = "Distribution of the number of gender-related cases heard p
 
 \newpage
 
+"Weighted least squares results, gender cases only. Outcome is proportion of feminist votes.  Models 1--4 are for all judges, while Models 5--8 are for judges with 1--4 children.  (No judge among those with 1--4 children had four girls.) All models include fixed effects for number of children and use weights based on the number of cases heard by each judge."
+
 ```{r stargazer, results = "asis"}
 ########################################################
 ## Table 4: Core Results (WLS) 
@@ -387,8 +389,8 @@ mod_7 <- lm(lib_vote_share ~ I(girls>0) + as.factor(child) + republican + age + 
 mod_8 <- lm(lib_vote_share ~ I(girls>0) + as.factor(child) + republican + age + I(religion == 4) + woman + I(race == 2) + I(race ==3) + as.factor(circuit_1), 
 	data = subset(judge_data, child < 5 & child > 0), weights = judge_data$no_cases[which(judge_data$child > 0 & judge_data$child < 5)])
 
-stargazer(mod_1, mod_2, mod_3, mod_4, mod_5, mod_6, mod_7, mod_8, header = FALSE,
-	style = "ajps", omit.stat = c("f","ser"), dep.var.labels = "Weighted least squares results, gender cases only. Outcome is proportion of feminist votes.  Models 1--4 are for all judges, while Models 5--8 are for judges with 1--4 children.  (No judge among those with 1--4 children had four girls.) All models include fixed effects for number of children and use weights based on the number of cases heard by each judge.", digits = 2, omit = c("circuit"), covariate.labels = c("1 Girl","2 Girls","3 Girls","4 Girls","5 Girls","At Least 1 Girl",	
+stargazer(mod_1, mod_2, mod_3, mod_4, mod_5, mod_6, mod_7, mod_8, header = FALSE, font.size = "small",
+	style = "ajps", omit.stat = c("f","ser"), digits = 2,  column.sep.width = "-8pt", omit = c("circuit"), covariate.labels = c("1 Girl","2 Girls","3 Girls","4 Girls","5 Girls","At Least 1 Girl",	
 	"1 Child","2 Children","3 Children","4 Children","5 Children","6 Children","7 Children","8 Children",
 	"9 Children","Republican","Age at Investiture","Catholic","Woman","African American","Hispanic","Constant"))
 ```
@@ -417,12 +419,11 @@ mod_10 <- glm(progressive_vote ~ I(girls>0) + as.factor(child) + republican + ag
 mod_11 <- glm(progressive_vote ~ I(girls>0) + as.factor(child) + republican + age + I(religion == 4) + woman + I(race == 2) + I(race == 3) + as.factor(circuit) + as.factor(year) + as.factor(area), data = wom_cases, family = binomial)
 
 
-stargazer(type = "latex", mod_7, mod_8, mod_9, mod_10, mod_11, header = FALSE, var.labels = "Logit and ordered logit results, gender cases only. Outcome is whether judge in a case votes in a feminist direction (Columns 1--5) or in a conservative, moderate, or liberal direction (Column 6).  All models include fixed effects for total number of children and Columns 3--6 include circuit and year fixed effects. Column 5 additionally includes standard errors clustered at the case level", covariate.labels = c("1 Girl","2 Girls","3 Girls","At Least 1 Girl",
+print(stargazer(type = "latex", mod_7, mod_8, mod_9, mod_10, mod_11, header = FALSE, var.labels = "Logit and ordered logit results, gender cases only. Outcome is whether judge in a case votes in a feminist direction (Columns 1--5) or in a conservative, moderate, or liberal direction (Column 6).  All models include fixed effects for total number of children and Columns 3--6 include circuit and year fixed effects. Column 5 additionally includes standard errors clustered at the case level",  covariate.labels = c("1 Girl","2 Girls","3 Girls","At Least 1 Girl",
 	"2 Children","3 Children","4 Children","Republican","Age at Investiture","Catholic","Woman",	
 	"African American","Hispanic", "10th Cir", "11th Cir","2nd Cir","3rd Cir",
 	"4th Cir","5th Cir","6th Cir","7th Cir","8th Cir","9th Cir","DC","1997","1998","1999","2000","2001","2002",
-	"Employment","Pregnancy","Reproduction","Title IX","Constant"),digits = 2)
-
+	"Employment","Pregnancy","Reproduction","Title IX","Constant"),digits = 2), scalebox="0.7")
 
 # # 
 # # ## Now: Calculating standard errors bootstrapped at the case level:
