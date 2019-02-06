@@ -16,47 +16,34 @@ library(dplyr)
 library(janitor)
 library(knitr)
 library(kableExtra)
-# library(gt)
+
+# Attaching necessary libraries from replication code
+library(xtable)
+library(stargazer)
+
+
+## The below are global options used to clean up the formatting and 
+## overall appearance of the code.
 
 # Global option used in table to replace NAs with '-' for aesthetics
 options(knitr.kable.NA = '-')
-
-# Loading in the data
-
-# taken from given replication file
-# library(Zelig)
-# library("ZeligChoice") 
-library(xtable)
-# library(reshape)
-# library(apsrtable)
-library(stargazer)
-# library(rms)
-
+# Global option used in creating tables to get rid of junk output
+options(xtable.comment = FALSE)
 ```
+
+# Table 1
 ```{r xtable, results="asis"}
 
-# garbage to be deleted
-# sim <- Zelig:::sim
-
-# garbage to be deleted
-# cl   <- function(dat,fm, cluster){
-#            require(sandwich, quietly = TRUE)
-#            require(lmtest, quietly = TRUE)
-#            M <- length(unique(cluster))
-#            N <- length(cluster)
-#            K <- fm$rank
-#            dfc <- (M/(M-1))*((N-1)/(N-K))
-#            uj  <- apply(estfun(fm),2, function(x) tapply(x, cluster, sum));
-#            vcovCL <- dfc*sandwich(fm, meat=crossprod(uj)/N)
-#            coeftest(fm, vcovCL) }
-           
+# Creating judge and case data to be used for tables in the replication.
+# clean_names() is not necessary, but was added to ensure that there were no improperly
+# formatted variable names that could result in errors when running the code. Better safe
+# than sorry!
 case_data  <- read_csv("dataverse_files/glynn_sen_daughters_by_case_1.csv") %>% clean_names()
 judge_data <- read_csv("dataverse_files/glynn_sen_daughters_by_judge.csv") %>% clean_names()
            
 
-
 ########################################################
-## Loading the Data
+## Loading the Data [code below was taken from replication data]
 ########################################################
 
 ## This loads three data sets
@@ -67,17 +54,17 @@ judge_data <- read_csv("dataverse_files/glynn_sen_daughters_by_judge.csv") %>% c
 
 # ## Gender cases only
 # ## Removing male plaintiffs:
- women_cases <- subset(case_data, femplaintiff == 1)
+women_cases <- subset(case_data, femplaintiff == 1)
 
- women_cases <- subset(women_cases, (area %in% c("employment", "Title IX", "pregnancy", "abortion", "reproductive rights")))
+women_cases <- subset(women_cases, (area %in% c("employment", "Title IX", "pregnancy", "abortion", "reproductive rights")))
 
- women_cases$area <- factor(women_cases$area, levels = c("abortion","employment","pregnancy","reproductive rights","Title IX"))
+women_cases$area <- factor(women_cases$area, levels = c("abortion","employment","pregnancy","reproductive rights","Title IX"))
 
 # this is the intro to the reading in of the case file
 # ## All cases, including non-gender cases (from Ashlyn Kuersten/Susan Haire's coding)
 # cases <- read.csv("cases.for.analysis.csv")	
 
- # NOTE: think of better name for this variable than "all"
+# NOTE: think of better name for this variable than "all"
 all <- subset(judge_data, girls != "NaN") # subsets judge
 								  # data to those for 
 								  # whom we have fertility data
@@ -123,6 +110,8 @@ t1_combined %>%
 
 ```
 
+\newpage
+# Table 2
 ```{r, results="asis"}
 ########################################################
 ## Table 2: Judge Demographics
@@ -329,6 +318,8 @@ text(x = .075, y = .6, "All", pos = 4, cex = 0.9)
 ```
 
 
+\newpage
+# Table 3
 ```{r, results="asis"}
 
 
@@ -343,6 +334,9 @@ xtable(gg, caption = "Distribution of the number of gender-related cases heard p
 
 ```
 
+
+\newpage
+# Table 4
 ```{r stargazer, results = "asis"}
 ########################################################
 ## Table 4: Core Results (WLS) 
@@ -386,6 +380,8 @@ stargazer(mod_1, mod_2, mod_3, mod_4, mod_5, mod_6, mod_7, mod_8, header = FALSE
 	"9 Children","Republican","Age at Investiture","Catholic","Woman","African American","Hispanic","Constant"))
 ```
 
+\newpage
+# Table 5
 ```{r, results="asis"}
 #######################################################
 ## Table 5: Core Results (Case-Level)
@@ -469,14 +465,12 @@ stargazer(type = "latex", mod_7, mod_8, mod_9, mod_10, mod_11, header = FALSE, v
 # 
 # 
 ```
-```{r}
-#######################################################
-## Table 6: Comparison for Non-Gender Related Cases
-#######################################################
 
-# WE DO NOT DO THIS ONE
+\newpage
+# Table 6: omitted from results
 
-```
+\newpage
+# Table 7
 ```{r, results="asis"}
 ########################################################
 ## Table 7: Dividing Up the Sample
@@ -537,7 +531,8 @@ stargazer(mod_REP, mod_DEM, mod_MEN, mod_WOMEN, mod_REPMEN,
 
 ```
 
-
+\newpage
+# Table 8
 ```{r, results="asis"}
 
 
