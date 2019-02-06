@@ -17,6 +17,7 @@ library(janitor)
 library(knitr)
 library(kableExtra)
 # library(gt)
+library(boot)
 
 # Global option used in table to replace NAs with '-' for aesthetics
 options(knitr.kable.NA = '-')
@@ -31,7 +32,6 @@ library(xtable)
 # library(apsrtable)
 library(stargazer)
 # library(rms)
-
 ```
 ```{r xtable, results="asis"}
 
@@ -122,6 +122,8 @@ t1_combined %>%
 
 
 ```
+
+\newpage
 
 ```{r, results="asis"}
 ########################################################
@@ -300,6 +302,9 @@ dem_means <- subset(judge_data, republican == 0)
 ## for example, this code is used in Figure 1, table 3
 
 ```
+
+\newpage
+
 ```{r}
 #######################################################
 ## Figure 1
@@ -327,7 +332,7 @@ text(x = .075, y = .6, "All", pos = 4, cex = 0.9)
 
 
 ```
-
+\newpage
 
 ```{r, results="asis"}
 
@@ -342,6 +347,8 @@ xtable(gg, caption = "Distribution of the number of gender-related cases heard p
 
 
 ```
+
+\newpage
 
 ```{r stargazer, results = "asis"}
 ########################################################
@@ -385,6 +392,8 @@ stargazer(mod_1, mod_2, mod_3, mod_4, mod_5, mod_6, mod_7, mod_8, header = FALSE
 	"1 Child","2 Children","3 Children","4 Children","5 Children","6 Children","7 Children","8 Children",
 	"9 Children","Republican","Age at Investiture","Catholic","Woman","African American","Hispanic","Constant"))
 ```
+\newpage
+
 
 ```{r, results="asis"}
 #######################################################
@@ -469,6 +478,9 @@ stargazer(type = "latex", mod_7, mod_8, mod_9, mod_10, mod_11, header = FALSE, v
 # 
 # 
 ```
+
+\newpage
+
 ```{r}
 #######################################################
 ## Table 6: Comparison for Non-Gender Related Cases
@@ -477,6 +489,9 @@ stargazer(type = "latex", mod_7, mod_8, mod_9, mod_10, mod_11, header = FALSE, v
 # WE DO NOT DO THIS ONE
 
 ```
+
+\newpage
+
 ```{r, results="asis"}
 ########################################################
 ## Table 7: Dividing Up the Sample
@@ -537,6 +552,7 @@ stargazer(mod_REP, mod_DEM, mod_MEN, mod_WOMEN, mod_REPMEN,
 
 ```
 
+\newpage
 
 ```{r, results="asis"}
 
@@ -574,6 +590,9 @@ stargazer(mod_12, mod_13, mod_14, header = FALSE,
 
 
 ```
+
+\newpage
+
 ```{r, results="asis"}
 
 ########################################################
