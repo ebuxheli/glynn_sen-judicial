@@ -354,7 +354,7 @@ gg %>%
 
 
 # Table 4: Weighted Least Squares Results, Gender-Related Cases Only
-```{r stargazer, results = "asis"}
+```{r stargazer, results="asis"}
 ########################################################
 ## Table 4: Core Results (WLS) 
 ########################################################
@@ -410,7 +410,7 @@ stargazer(mod_1, mod_2, mod_3, mod_4, mod_5, mod_6, mod_7, mod_8,
 
 "Logit and ordered logit results, gender cases only. Outcome is whether judge in a case votes in a feminist direction (Columns 1--5) or in a conservative, moderate, or liberal direction (Column 6).  All models include fixed effects for total number of children and Columns 3--6 include circuit and year fixed effects. Column 5 additionally includes standard errors clustered at the case level
 
-# Table 5
+# Table 5: Logit and Ordered Logit Results, Gender-Related Cases Only
 ```{r, results="asis"}
 #######################################################
 ## Table 5: Core Results (Case-Level)
@@ -515,7 +515,7 @@ load("bootstraps.RData")
 
 ## Replacing the normal SEs with the bootstrap SEs for the final Table 5
 stargazer(mod_7, mod_8, mod_9, mod_10, my.out11,
-	style = "ajps", omit.stat = c("f","ser"), covariate.labels = c("1 Girl","2 Girls","3 Girls","At Least 1 Girl",
+	 style = "apsr", omit.stat = c("f","ser"), covariate.labels = c("1 Girl","2 Girls","3 Girls","At Least 1 Girl",
 	"2 Children","3 Children","4 Children","Republican","Age at Investiture","Catholic","Woman",
 	"African American","Hispanic", "10th Cir", "11th Cir","2nd Cir","3rd Cir",
 	"4th Cir","5th Cir","6th Cir","7th Cir","8th Cir","9th Cir","DC","1997","1998","1999","2000","2001","2002",
@@ -528,8 +528,7 @@ stargazer(mod_7, mod_8, mod_9, mod_10, my.out11,
 \newpage
 # Table 6: omitted from results
 
-\newpage
-# Table 7
+# Table 7: Weighted Least Squares Results
 ```{r, results="asis"}
 ########################################################
 ## Table 7: Dividing Up the Sample
@@ -623,11 +622,11 @@ mod_14 <- lm(lib_vote_share ~ I(girls > 0) + I(republican==1),
 
 
 stargazer(mod_12, mod_13, mod_14, header = FALSE, 
-	style = "ajps", omit.stat = c("f","ser"), dep.var.labels = "Liberal Judge-Vote")
-
-
-
+	style = "ajps", omit.stat = c("f","ser"), dep.var.labels = "Liberal Judge-Vote",
+	covariate.labels = c("1 Girl", "1 Child", "Republican", "Constant"))
 ```
+\newpage
+#Table 9: Proportion of Girls (Conditional on Number of Children) for U.S. Courts of Appeals Judges Participating in Gender-Related Cases, 1996-2002
 ```{r, results="asis"}
 
 ########################################################

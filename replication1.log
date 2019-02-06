@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017) (preloaded format=pdflatex 2017.5.23)  6 FEB 2019 04:22
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017) (preloaded format=pdflatex 2017.5.23)  6 FEB 2019 05:01
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1113,7 +1113,7 @@ File: mt-msb.cfg 2005/06/01 v1.0 microtype config. file: AMS symbols (b) (RS)
 ) [1
 
 {/usr/local/texlive/2017/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
-<replication1_files/figure-latex/unnamed-chunk-4-1.pdf, id=50, 380.42125pt x 24
+<replication1_files/figure-latex/unnamed-chunk-4-1.pdf, id=54, 380.42125pt x 24
 8.93pt>
 File: replication1_files/figure-latex/unnamed-chunk-4-1.pdf Graphic file (type 
 pdf)
@@ -1130,48 +1130,48 @@ lready used, duplicate ignored
 l.257 \newpage
               ]
 
-LaTeX Warning: Float too large for page by 306.15936pt on input line 356.
+LaTeX Warning: Float too large for page by 306.15936pt on input line 357.
 
 [6] [7pdfTeX warning (ext4): destination with the same identifier (name{table.2
 }) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.358 \newpage
-              ] [8] [9pdfTeX warning (ext4): destination with the same identifi
-er (name{table.3}) has been already used, duplicate ignored
+l.359 \newpage
+              ] [8pdfTeX warning (ext4): destination with the same identifier (
+name{table.3}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
 l.393 \newpage
-              ]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 438.
-[10pdfTeX warning (ext4): destination with the same identifier (name{table.4}) 
-has been already used, duplicate ignored
+              ] [9pdfTeX warning (ext4): destination with the same identifier (
+name{table.4}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.438 \end{document}
-                    ]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 438.
+l.419 \end{table}\newpage
+                         ]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 445.
+[10]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 445.
 (./replication1.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 438.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 438.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 445.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 445.
 Package rerunfilecheck Info: File `replication1.out' has not changed.
-(rerunfilecheck)             Checksum: 8EE0E29C64B2939817449D1B7D896C38;3392.
+(rerunfilecheck)             Checksum: E1D13769ECAFFCC9F95EACEC87764CF5;4735.
 
 LaTeX Warning: There were multiply-defined labels.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 438.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 445.
  ) 
 Here is how much of TeX's memory you used:
- 14210 strings out of 492995
- 204532 string characters out of 6132704
- 344852 words of memory out of 5000000
- 17477 multiletter control sequences out of 15000+600000
+ 14213 strings out of 492995
+ 204790 string characters out of 6132704
+ 345115 words of memory out of 5000000
+ 17479 multiletter control sequences out of 15000+600000
  40458 words of font info for 55 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 34i,11n,38p,809b,345s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 34i,11n,38p,896b,345s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/local/texlive/2017/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}{/usr/lo
 cal/texlive/2017/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}{/usr/local/texlive/20
 17/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc}{/usr/local/texlive/2017/texmf-d
@@ -1184,10 +1184,10 @@ cal/texlive/2017/texmf-dist/fonts/type1/public/lm/lmr17.pfb></usr/local/texlive
 dist/fonts/type1/public/lm/lmri12.pfb></usr/local/texlive/2017/texmf-dist/fonts
 /type1/public/lm/lmsy10.pfb></usr/local/texlive/2017/texmf-dist/fonts/type1/pub
 lic/lm/lmsy7.pfb>
-Output written on replication1.pdf (10 pages, 177495 bytes).
+Output written on replication1.pdf (10 pages, 177913 bytes).
 PDF statistics:
- 145 PDF objects out of 1000 (max. 8388607)
- 119 compressed objects within 2 object streams
- 24 named destinations out of 1000 (max. 500000)
- 8270 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 150 PDF objects out of 1000 (max. 8388607)
+ 124 compressed objects within 2 object streams
+ 25 named destinations out of 1000 (max. 500000)
+ 8278 words of extra memory for PDF output out of 10000 (max. 10000000)
 
