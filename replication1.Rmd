@@ -392,7 +392,7 @@ mod_8 <- lm(lib_vote_share ~ I(girls>0) + as.factor(child) + republican + age + 
 
 cat("\\setcounter{table}{3}")
 stargazer(mod_1, mod_2, mod_3, mod_4, mod_5, mod_6, mod_7, mod_8, 
-          header = FALSE, style = "apsr", omit.stat = c("f","ser"),  
+          header = FALSE, style = "apsr", omit.stat = c("f","ser"),  font.size = "small",
           column.sep.width = "-8pt", digits = 2, 
           omit = c("circuit"), #line to omit descriptors
           dep.var.labels=c("All Judges","Judges with 1-4 Children"), #attempt at grouping columns
@@ -506,13 +506,12 @@ names(caselist) <- casenames
 load("bootstraps.RData")
 
 ## Replacing the normal SEs with the bootstrap SEs for the final Table 5
-stargazer(mod_7, mod_8, mod_9, mod_10, my.out11, header = FALSE, 
-	 style = "apsr", omit.stat = c("f","ser"), covariate.labels = c("1 Girl","2 Girls","3 Girls","At Least 1 Girl",
-	"2 Children","3 Children","4 Children","Republican","Age at Investiture","Catholic","Woman",
-	"African American","Hispanic", "10th Cir", "11th Cir","2nd Cir","3rd Cir",
-	"4th Cir","5th Cir","6th Cir","7th Cir","8th Cir","9th Cir","DC","1997","1998","1999","2000","2001","2002",
-	"Employment","Pregnancy","Reproduction","Title IX","Constant"),se = list(mod_7 = NULL, mod_8 = NULL, mod_9 = NULL, mod_10 = NULL, my.out11 = bcse11), digits = 2)
-#
+stargazer(mod_7, mod_8, mod_9, mod_10, my.out11, header = FALSE, font.size = "small", type = "latex",
+	 style = "apsr", omit.stat = c("f","ser"), 
+	 keep = c("girls", "republican", "age", "religion", "woman", "race", "area", "coefficients"),
+	 covariate.labels = c("1 Girl","2 Girls","3 Girls","At Least 1 Girl","Republican","Age at Investiture","Catholic","Woman","African American","Hispanic", "Employment", "Pregnancy", "Reproductive", "Title IX"),
+se = list(mod_7 = NULL, mod_8 = NULL, mod_9 = NULL, mod_10 = NULL, my.out11 = bcse11), digits = 2)
+
 
 
 ```
