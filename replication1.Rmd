@@ -497,7 +497,7 @@ stargazer(mod_7, mod_8, mod_9, mod_10, my.out11,
 	"2 Children","3 Children","4 Children","Republican","Age at Investiture","Catholic","Woman",
 	"African American","Hispanic", "10th Cir", "11th Cir","2nd Cir","3rd Cir",
 	"4th Cir","5th Cir","6th Cir","7th Cir","8th Cir","9th Cir","DC","1997","1998","1999","2000","2001","2002",
-	"Employment","Pregnancy","Reproduction","Title IX","Constant"),se = list(mod_7 = NULL, mod_8 = NULL, mod_9 = NULL, mod_10 = NULL,my.out11 = bcse11), digits = 2)
+	"Employment","Pregnancy","Reproduction","Title IX","Constant"),se = list(mod_7 = NULL, mod_8 = NULL, mod_9 = NULL, mod_10 = NULL, my.out11 = bcse11), digits = 2)
 #
 
 
