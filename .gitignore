@@ -4,4 +4,6 @@
 .Ruserdata
 *.Rproj
 example.Rmd
-.log
+*.log
+replication1_cache
+replication1_files
