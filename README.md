@@ -1,9 +1,7 @@
 # Replication 1
 Replicating models and figures in "Identifying Judicial Empathy: Does Having Daughters Cause Judges to Rule for Women’s Issues?" by Glynn and Sen.
 
-NOTE TO ENXHI: Hi, most of the code in comments can and should be deleted.
- 
-Much of the replication code found here has been taken from the replication code supplied by the authors of the study at //link//. 
+Much of the replication code found here has been taken from the replication code supplied by the authors of the study, and [can be found here](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/26544).
 
 There have been alterations to this code, some small, some major. 
 
