@@ -256,6 +256,21 @@ gg %>%
   kable_styling(position = "center")
 ```
 
+\newpage
+
+# Table 4: Weighted Least Squares Results, Gender-Related Cases Only
+
+This table deals with a regression of the percent increase in the likelihood of a judge deciding a case in a feminine direction. The weights in the regression are corresponding to the number of cases that have been heard by each judge. This application in the paper makes sense, because it is desireable to assign more significance in our model to the data that we are more sure is correct (in this case defined as having more observed occurences of a judge's behavior). 
+
+However, there are concerns with the overall shape of the data. The data set first of all contains a lot of very low numbers of cases in it - 50% of hthe judges have less than or equal to 8 cases that describe them, and 25% have less than or equal to 5 cases. On the low end, that means that there are a lot of judges that have very low numbers of caes thatwe have data on. This means that their proportion of progressive votes decided could be significantly inaccurate for these many judges with very small case files. Because the model underweights these areas of the data, however, the deletion of these potentially incorrect points should not affect the ultimate model, however. 
+
+The algorithm also very heavily weights the cases with a significant amount of data. However, because there are very few of these cases, that means that potentially outlying statistical effects can be greatly increased. One interesting artifact of their removal, however, is that the significance of some the factors increases slightly. It is possible that this is due to some significant outliers in the dataset from the weighted method used to compute the regression.
+
+The main motivation for this analysis for table 4 is the realization there are many low case coutns for many judges, which potentially results in a significant discrepancy or error interval surrounding their empirically observed proportion of votes cast in a feminist manner. For example, using a bayesian and binomial interpretation of the proportion of votes cast in a feminist manner, a judge that only had four data points informing an estimate of his or her likelihood to vote would have a large error interval (QUANTIFY).
+
+It should be recognized that the quality and estimation of this data is of the utmost importance. If the predictor is biased towards a fewer number of values than needed, or is off by some small but unexpected amount, that could potentially affect the outcomes of many court cases. 
+
+
 
 \newpage
 
@@ -301,6 +316,68 @@ mod_7 <- lm(lib_vote_share ~ I(girls>0) + as.factor(child) + republican + age + 
 
 mod_8 <- lm(lib_vote_share ~ I(girls>0) + as.factor(child) + republican + age + I(religion == 4) + woman + I(race == 2) + I(race ==3) + as.factor(circuit_1), 
 	data = subset(judge_data, child < 5 & child > 0), weights = judge_data$no_cases[which(judge_data$child > 0 & judge_data$child < 5)])
+
+
+cat("\\setcounter{table}{3}")
+stargazer(mod_1, mod_2, mod_3, mod_4, mod_5, mod_6, mod_7, mod_8, 
+          header = FALSE, style = "apsr", omit.stat = c("f","ser"),  font.size = "small",
+          column.sep.width = "-8pt", digits = 2, 
+          omit = c("circuit"), #line to omit descriptors
+          dep.var.labels=c("All Judges","Judges with 1-4 Children"), #attempt at grouping columns
+          keep = c("girls", "republican", "age", "religion", "woman", "race", "coefficients"),
+          covariate.labels = c("1 Girl","2 Girls","3 Girls","4 Girls","5 Girls",
+                               "At Least 1 Girl",	
+                               "Republican","Age at Investiture","Catholic",
+                               "Woman","African American","Hispanic",
+                               "Constant"))
+```
+\newpage
+
+"Weighted least squares results, gender cases only. Outcome is proportion of feminist votes.  Models 1--4 are for all judges, while Models 5--8 are for judges with 1--4 children.  (No judge among those with 1--4 children had four girls.) All models include fixed effects for number of children and use weights based on the number of cases heard by each judge."
+
+THIS IS THE ONE WITH THE DATA THAT WE CHANGED UP! SO THIS IS THE CASE WHERE WE ONLY USE THE DATA FOR JUDGES WITH less than 14 CASES IN THE DATA
+
+
+
+# Table 4: Weighted Least Squares Results, Gender-Related Cases Only
+```{r, results="asis"}
+########################################################
+## Table 4: Core Results (WLS) 
+########################################################
+
+## Note from John: had to change as.factor(circuit.1) to as.factor(circuit_1), 
+# because of the way that Zelig changed how they handle renaming columns
+# with the same name
+
+################ Results for all judges
+
+judge_data_leq14 <- filter(judge_data, no_cases <= 14)
+
+mod_1 <- lm(lib_vote_share ~ as.factor(girls) + as.factor(child), 
+	data = judge_data_leq14, weights = judge_data_leq14$no_cases)
+
+mod_2 <- lm(lib_vote_share ~ I(girls>0) + as.factor(child), 
+	data = judge_data_leq14, weights = judge_data_leq14$no_cases)
+
+mod_3 <- lm(lib_vote_share ~ I(girls>0) + as.factor(child) + republican + age + I(religion == 4) + woman + I(race == 2) + I(race ==3), 
+	data = judge_data_leq14, weights = judge_data_leq14$no_cases)
+
+mod_4 <- lm(lib_vote_share ~ I(girls>0) + as.factor(child) + republican + age + I(religion == 4) + woman + I(race == 2) + I(race ==3) + as.factor(circuit_1), 
+	data = judge_data_leq14, weights = judge_data_leq14$no_cases)
+		
+################ Results for judges between 1 and 4 children
+	
+mod_5 <- lm(lib_vote_share ~ as.factor(girls) + as.factor(child), 
+	data = subset(judge_data_leq14, child < 5 & child > 0), weights = judge_data_leq14$no_cases[which(judge_data_leq14$child > 0 & judge_data_leq14$child < 5)])
+
+mod_6 <- lm(lib_vote_share ~ I(girls>0) + as.factor(child), 
+	data = subset(judge_data_leq14, child < 5 & child > 0), weights = judge_data_leq14$no_cases[which(judge_data_leq14$child > 0 & judge_data_leq14$child < 5)])
+
+mod_7 <- lm(lib_vote_share ~ I(girls>0) + as.factor(child) + republican + age + I(religion == 4) + woman + I(race == 2) + I(race ==3), 
+	data = subset(judge_data_leq14, child < 5 & child > 0), weights = judge_data_leq14$no_cases[which(judge_data_leq14$child > 0 & judge_data_leq14$child < 5)])
+
+mod_8 <- lm(lib_vote_share ~ I(girls>0) + as.factor(child) + republican + age + I(religion == 4) + woman + I(race == 2) + I(race ==3) + as.factor(circuit_1), 
+	data = subset(judge_data_leq14, child < 5 & child > 0), weights = judge_data_leq14$no_cases[which(judge_data_leq14$child > 0 & judge_data_leq14$child < 5)])
 
 
 cat("\\setcounter{table}{3}")
@@ -381,6 +458,15 @@ stargazer(mod_1, mod_2, mod_3, mod_4, mod_5, mod_6, mod_7, mod_8,
                                "Constant"))
 ```
 
+\newpage
+
+# Table 5
+
+One main critique of this table is that it treats every case as if it is identical, and tries to abstract away the details. This could not be further from the truth. It is possible that some judges do not hear some cases because the lower courts within the jurisdiction are more conservative/liberal, and so prevent reasonable cases from showing up in some areas, as opposed to others. There are other potential errors, including a small number of people who have heard a large number of cases - this means that there are going to be a lot of cases with the same inputs, and this can greatly affect the model. 
+
+The whole argument for this paper is based off of the correctness of the variable progressive_vote, and this assumption appears to be questionable. The skewness of the number of cases makes it so that a small proportion of judges have heard a large number of the cases in the dataset. These prolific judges will result in a large number of cases that all have the same inputted demographic features, which will mean that the model can fit to this small portion of the population well and predict the overall outcomes of the lawsuits. 
+
+Future work would check if there is a significant but spurious correlation between the number of cases in this dataset, the pattern of voting, and the pattern of demographic data. If these correlations existed, then the validity of the paper would be in question. 
 
 \newpage
 
