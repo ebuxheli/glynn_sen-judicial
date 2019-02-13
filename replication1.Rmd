@@ -8,7 +8,7 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE, comment=NA, cache = TRUE)
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE, comment=NA)
 
 # Attaching necessary libraries
 library(tidyverse)
@@ -53,150 +53,76 @@ judge_data <- read_csv("dataverse_files/glynn_sen_daughters_by_judge.csv") %>% c
 ## (Commented out; their data are available from their website)
 
 # ## Gender cases only
-# ## Removing male plaintiffs:
+# ## Removing male plaintiffs and making variables readable
 women_cases <- subset(case_data, femplaintiff == 1)
+women_cases <- subset(women_cases, 
+                      (area %in% c("employment", "Title IX", "pregnancy", 
+                                   "abortion", "reproductive rights")))
+women_cases$area <- factor(women_cases$area, 
+                           levels = c("abortion","employment","pregnancy",
+                                      "reproductive rights","Title IX"))
 
-women_cases <- subset(women_cases, (area %in% c("employment", "Title IX", "pregnancy", "abortion", "reproductive rights")))
-
-women_cases$area <- factor(women_cases$area, levels = c("abortion","employment","pregnancy","reproductive rights","Title IX"))
-
-# this is the intro to the reading in of the case file
-# ## All cases, including non-gender cases (from Ashlyn Kuersten/Susan Haire's coding)
-# cases <- read.csv("cases.for.analysis.csv")	
-
-# NOTE: think of better name for this variable than "all"
-all <- subset(judge_data, girls != "NaN") # subsets judge
-								  # data to those for 
-								  # whom we have fertility data
-
+# subsets judge data to those for whom we have fertility data
+all <- filter(judge_data, !is.na(girls))
 ```
 
-# Table 1: Number of Children and Girls for U.S. Courts of Appeals Judges Participating in Gender-Related Cases, 1996-2002
-```{r, results="asis"}
-######################################################
-## Table 1: Number of children and girls
-######################################################
-
-# Table 1: Number of Children and Girls for U.S. Courts of Appeals Judges 
-#          Participating in Gender-Related Cases, 1996-2002
-# Here we are keeping the # of children, # of girls, & party affiliation and
-# building a count table. Additionally, here the party name is recoded to be
-# more friendly to a reader of the table ("Republicans" and "Democrats")
-t1 <- select(judge_data,
-              child, girls, republican) %>% 
-  filter(child < 10, girls < 10) %>% 
-  mutate(party = ifelse(1 == republican, "Republicans", "Democrats"))
-
-
-# Number of Children portion of the table
-t1_child <- t1 %>% 
-  count(party, child) %>% 
-  spread(child, n) %>% 
-  adorn_totals("col")
-
-# Number of Girls portion of the table
-t1_girls <- t1 %>% 
-  count(party, girls) %>% 
-  spread(girls, n) %>% 
-  adorn_totals("col")
-
-# Binding the rows to create one table with girls and children
-# column_spec is a function that adds the row with the total counts
-t1_combined <- bind_rows(t1_child, t1_girls)
-colnames(t1_combined) <- c("Count", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "N")
-t1_combined %>% 
-  kable("latex", booktabs = TRUE, col.names = ) %>% kable_styling(position = "center") %>% 
-  column_spec(1, bold = TRUE) %>% 
-  group_rows("Number of Children", 1, 2, bold = TRUE) %>% 
-  group_rows("Number of Girls", 3, 4, hline_before = TRUE)
-```
-
-\newpage
 # Table 2: Demographics of U.S. Courts of Appeals Judges Who Voted on Gender-Related Cases, 1996-2002
 ```{r, results="asis"}
 ########################################################
 ## Table 2: Judge Demographics
 ########################################################
 
+# creating subsets of the original data set for further analysis
 dems  <- subset(all, republican == 0)
 reps  <- subset(all, republican == 1)
 women <- subset(all, woman == 1)
 men   <- subset(all, woman == 0)
 
+mean_kids <-  tibble(all = mean(na.omit(all$child)), 
+		dems  = mean(na.omit(dems$child)),
+		reps  = mean(na.omit(reps$child)),
+		women = mean(na.omit(women$child)),
+		men   = mean(na.omit(men$child)))
 
-mean_kids <-  bind_cols(list(mean(na.omit(all$child)), 
-		mean(na.omit(dems$child)),
-		mean(na.omit(reps$child)),
-		mean(na.omit(women$child)),
-		mean(na.omit(men$child)))
-	)
+mean_girls <-  tibble(all = mean(na.omit(all$girls)), 
+		dems  = mean(na.omit(dems$girls)),
+		reps  = mean(na.omit(reps$girls)),
+		women = mean(na.omit(women$girls)),
+		men   = mean(na.omit(men$girls)))
 
-mean_girls <- bind_cols(list(mean(na.omit(all$girls)), 
-		mean(na.omit(dems$girls)),
-		mean(na.omit(reps$girls)),
-		mean(na.omit(women$girls)),
-		mean(na.omit(men$girls))
-	))
+# frequency tables for children
+aa <- table(na.omit(all$child))   #all
+bb <- table(na.omit(dems$child))  #dems
+cc <- table(na.omit(reps$child))  #reps
+dd <- table(na.omit(women$child)) #women
+ee <- table(na.omit(men$child))   #men
 
-prop_zero <- bind_cols(list(prop.table(table(na.omit(all$child)))[1],
-prop.table(table(na.omit(dems$child)))[1],
-prop.table(table(na.omit(reps$child)))[1],
-prop.table(table(na.omit(women$child)))[1],
-prop.table(table(na.omit(men$child)))[1]
-	))
-	
-	
-prop_one <- bind_cols(list(prop.table(table(na.omit(all$child)))[2],
-prop.table(table(na.omit(dems$child)))[2],
-prop.table(table(na.omit(reps$child)))[2],
-prop.table(table(na.omit(women$child)))[2],
-prop.table(table(na.omit(men$child)))[2]
-	))
-	
-prop_two <- bind_cols(list(prop.table(table(na.omit(all$child)))[3],
-prop.table(table(na.omit(dems$child)))[3],
-prop.table(table(na.omit(reps$child)))[3],
-prop.table(table(na.omit(women$child)))[3],
-prop.table(table(na.omit(men$child)))[3]
-	))
-
-prop_three <- bind_cols(list(prop.table(table(na.omit(all$child)))[4],
-prop.table(table(na.omit(dems$child)))[4],
-prop.table(table(na.omit(reps$child)))[4],
-prop.table(table(na.omit(women$child)))[4],
-prop.table(table(na.omit(men$child)))[4]
-	))
-
-prop_four <- bind_cols(list(prop.table(table(na.omit(all$child)))[5],
-prop.table(table(na.omit(dems$child)))[5],
-prop.table(table(na.omit(reps$child)))[5],
-prop.table(table(na.omit(women$child)))[5],
-prop.table(table(na.omit(men$child)))[5]
-	))
-
-prop_five <- bind_cols(list(prop.table(table(na.omit(all$child)))[6],
-prop.table(table(na.omit(dems$child)))[6],
-prop.table(table(na.omit(reps$child)))[6],
-prop.table(table(na.omit(women$child)))[6],
-prop.table(table(na.omit(men$child)))[6]
-	))
-	
-aa <- table(na.omit(all$child))
-	plus6_all <- sum(aa[7:length(aa)])/sum(aa)
-	
-bb <- table(na.omit(dems$child))
-	plus6_dems <- sum(bb[7:length(bb)])/sum(bb)
-
-cc <- table(na.omit(reps$child))
-	plus6_reps <- sum(cc[7:length(cc)])/sum(cc)
-
-dd <- table(na.omit(women$child))
-	plus6_women <- sum(dd[7:length(dd)])/sum(dd)
-
-ee <- table(na.omit(men$child))
-	plus6_men <- sum(ee[7:length(ee)])/sum(ee)
+# proportions for 
+plus6_all   <- sum(aa[7:length(aa)])/sum(aa)
+plus6_dems  <- sum(bb[7:length(bb)])/sum(bb)
+plus6_reps  <- sum(cc[7:length(cc)])/sum(cc)
+plus6_women <- sum(dd[7:length(dd)])/sum(dd)
+plus6_men   <- sum(ee[7:length(ee)])/sum(ee)
 	
 prop_six_or_greater <- bind_cols(list(plus6_all, plus6_dems, plus6_reps, plus6_women, plus6_men))
+
+# Creates a tibble for the specified index to output a 
+# proportions table
+prop <- function(index){
+  tibble(All         = sum(aa[index])/sum(aa), 
+         Democrats   = sum(bb[index])/sum(bb), 
+         Republicans = sum(cc[index])/sum(cc),
+         Women       = sum(dd[index])/sum(dd), 
+         Men         = sum(ee[index])/sum(ee))
+}
+
+# creating the tibble outputs for the prop tables
+prop_zero  <- prop(1)
+prop_one   <- prop(2)
+prop_two   <- prop(3)
+prop_three <- prop(4)
+prop_four  <- prop(5)
+prop_five  <- prop(6)
 	
 mean_female <- bind_cols(list(mean(na.omit(all$woman)), 
 		mean(na.omit(dems$woman)),
@@ -296,33 +222,6 @@ dem_means <- subset(judge_data, republican == 0)
 ## for example, this code is used in Figure 1, table 3
 
 ```
-
-# Figure 1: Distribution of the Proportion of Cases Decided in a Feminist Direction out of All Gender-Related Cases Decided, 1996-2002
-```{r}
-#######################################################
-## Figure 1
-########################################################
-
-plot(density(judge_data$lib_vote_share), 
-	xlim = c(-.4,1.4), ylim = c(0,2.5),
-	ylab = "", xlab = "Proportion of Cases Decided in a Feminist Direction", 
-	yaxt = "n", 
-	bty = "n", 
-	main = "",
-	col = "black", lwd = 2)
-lines(density(rep_means$lib_vote_share), 
-	col = "firebrick", lwd = 2, lty  = 2)
-lines(density(dem_means$lib_vote_share), 
-	col = "dodgerblue", lwd = 2, lty  = 3)
-abline(v = .5, col = "grey50", lty = 2)
-text(x = .5, y = 2.4, "Less Feminist", col = "grey50", pos = 2, cex = 0.9)
-text(x = .5, y = 2.4, "More Feminist", col = "grey50", pos = 4, cex = 0.9)
-text(x = .25, y = 1.7, "Republicans", pos = 2, cex = 0.9)
-text(x = .7, y = 1, "Democrats", pos = 4, cex = 0.9)
-text(x = .075, y = .6, "All", pos = 4, cex = 0.9)
-
-```
-
 
 \newpage
 # Table 3: Distribution of the Number of Gender-Related Cases Heard per Judge, 1996-2002
@@ -617,7 +516,7 @@ stargazer(mod_12, mod_13, mod_14, header = FALSE,
 	covariate.labels = c("1 Girl", "1 Child", "Republican", "Constant"))
 ```
 \newpage
-#Table 9: Proportion of Girls (Conditional on Number of Children) for U.S. Courts of Appeals Judges Participating in Gender-Related Cases, 1996-2002
+# Table 9: Proportion of Girls (Conditional on Number of Children) for U.S. Courts of Appeals Judges Participating in Gender-Related Cases, 1996-2002
 ```{r, results="asis"}
 
 ########################################################
@@ -648,4 +547,69 @@ colnames(bb_1) <- c("0 Girls", "1 Girl", "2 Girls", "3 Girls", "4 Girls")
 xtable(cbind(aa_1, bb_1))
 ```
 
+# REMOVED TABLES:
+# Table 1: Number of Children and Girls for U.S. Courts of Appeals Judges Participating in Gender-Related Cases, 1996-2002
+```{r, results="asis"}
+######################################################
+## Table 1: Number of children and girls
+######################################################
 
+# Table 1: Number of Children and Girls for U.S. Courts of Appeals Judges 
+#          Participating in Gender-Related Cases, 1996-2002
+# Here we are keeping the # of children, # of girls, & party affiliation and
+# building a count table. Additionally, here the party name is recoded to be
+# more friendly to a reader of the table ("Republicans" and "Democrats")
+t1 <- select(judge_data,
+              child, girls, republican) %>% 
+  filter(child < 10, girls < 10) %>% 
+  mutate(party = ifelse(1 == republican, "Republicans", "Democrats"))
+
+
+# Number of Children portion of the table
+t1_child <- t1 %>% 
+  count(party, child) %>% 
+  spread(child, n) %>% 
+  adorn_totals("col")
+
+# Number of Girls portion of the table
+t1_girls <- t1 %>% 
+  count(party, girls) %>% 
+  spread(girls, n) %>% 
+  adorn_totals("col")
+
+# Binding the rows to create one table with girls and children
+# column_spec is a function that adds the row with the total counts
+t1_combined <- bind_rows(t1_child, t1_girls)
+colnames(t1_combined) <- c("Count", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "N")
+t1_combined %>% 
+  kable("latex", booktabs = TRUE, col.names = ) %>% kable_styling(position = "center") %>% 
+  column_spec(1, bold = TRUE) %>% 
+  group_rows("Number of Children", 1, 2, bold = TRUE) %>% 
+  group_rows("Number of Girls", 3, 4, hline_before = TRUE)
+```
+
+## Figure 1: Distribution of the Proportion of Cases Decided in a Feminist Direction out of All Gender-Related Cases Decided, 1996-2002
+```{r}
+#######################################################
+## Figure 1
+########################################################
+
+plot(density(judge_data$lib_vote_share), 
+	xlim = c(-.4,1.4), ylim = c(0,2.5),
+	ylab = "", xlab = "Proportion of Cases Decided in a Feminist Direction", 
+	yaxt = "n", 
+	bty = "n", 
+	main = "",
+	col = "black", lwd = 2)
+lines(density(rep_means$lib_vote_share), 
+	col = "firebrick", lwd = 2, lty  = 2)
+lines(density(dem_means$lib_vote_share), 
+	col = "dodgerblue", lwd = 2, lty  = 3)
+abline(v = .5, col = "grey50", lty = 2)
+text(x = .5, y = 2.4, "Less Feminist", col = "grey50", pos = 2, cex = 0.9)
+text(x = .5, y = 2.4, "More Feminist", col = "grey50", pos = 4, cex = 0.9)
+text(x = .25, y = 1.7, "Republicans", pos = 2, cex = 0.9)
+text(x = .7, y = 1, "Democrats", pos = 4, cex = 0.9)
+text(x = .075, y = .6, "All", pos = 4, cex = 0.9)
+
+```
