@@ -79,16 +79,16 @@ women <- subset(all, woman == 1)
 men   <- subset(all, woman == 0)
 
 mean_kids <-  tibble(all = mean(na.omit(all$child)), 
-		dems  = mean(na.omit(dems$child)),
-		reps  = mean(na.omit(reps$child)),
-		women = mean(na.omit(women$child)),
-		men   = mean(na.omit(men$child)))
+                     dems  = mean(na.omit(dems$child)),
+                     reps  = mean(na.omit(reps$child)),
+                     women = mean(na.omit(women$child)),
+                     men   = mean(na.omit(men$child)))
 
 mean_girls <-  tibble(all = mean(na.omit(all$girls)), 
-		dems  = mean(na.omit(dems$girls)),
-		reps  = mean(na.omit(reps$girls)),
-		women = mean(na.omit(women$girls)),
-		men   = mean(na.omit(men$girls)))
+                      dems  = mean(na.omit(dems$girls)),
+                      reps  = mean(na.omit(reps$girls)),
+                      women = mean(na.omit(women$girls)),
+                      men   = mean(na.omit(men$girls)))
 
 # frequency tables for children
 aa <- table(na.omit(all$child))   #all
@@ -104,16 +104,20 @@ plus6_reps  <- sum(cc[7:length(cc)])/sum(cc)
 plus6_women <- sum(dd[7:length(dd)])/sum(dd)
 plus6_men   <- sum(ee[7:length(ee)])/sum(ee)
 	
-prop_six_or_greater <- bind_cols(list(plus6_all, plus6_dems, plus6_reps, plus6_women, plus6_men))
+prop_six_or_greater <- tibble(all   = plus6_all, 
+                              dems  = plus6_dems, 
+                              reps  = plus6_reps, 
+                              women = plus6_women, 
+                              men   = plus6_men)
 
 # Creates a tibble for the specified index to output a 
 # proportions table
 prop <- function(index){
-  tibble(All         = sum(aa[index])/sum(aa), 
-         Democrats   = sum(bb[index])/sum(bb), 
-         Republicans = sum(cc[index])/sum(cc),
-         Women       = sum(dd[index])/sum(dd), 
-         Men         = sum(ee[index])/sum(ee))
+  tibble(all   = sum(aa[index])/sum(aa), 
+         dems  = sum(bb[index])/sum(bb), 
+         reps  = sum(cc[index])/sum(cc),
+         women = sum(dd[index])/sum(dd), 
+         men   = sum(ee[index])/sum(ee))
 }
 
 # creating the tibble outputs for the prop tables
@@ -124,41 +128,50 @@ prop_three <- prop(4)
 prop_four  <- prop(5)
 prop_five  <- prop(6)
 	
-mean_female <- bind_cols(list(mean(na.omit(all$woman)), 
-		mean(na.omit(dems$woman)),
-		mean(na.omit(reps$woman)),
-		NA_character_, #perfectly correlated (placeholder for Women)
-		NA_character_  #perfectly correlated (placeholder for Men)
-	))
-	
-mean_rep <- bind_cols(list(mean(na.omit(all$republican)), 
-    NA_character_, #perfectly correlated (placeholder for Democrats)
-    NA_character_, #perfectly correlated (placeholder for Republicans)
-		mean(na.omit(women$republican)),
-		mean(na.omit(men$republican))
-))
+mean_female <- tibble(all   = mean(na.omit(all$woman)), 
+                      dems  = mean(na.omit(dems$woman)),
+                      reps  = mean(na.omit(reps$woman)),
+                      women = NA_character_, #perfectly correlated (placeholder for Women)
+                      men   = NA_character_  #perfectly correlated (placeholder for Men)
+)
 
+mean_rep <- tibble(all   = mean(na.omit(all$republican)), 
+                   dems  = NA_character_, #perfectly correlated (placeholder for Democrats)
+                   reps  = NA_character_, #perfectly correlated (placeholder for Republicans)
+                   women = mean(na.omit(women$republican)),
+                   men   = mean(na.omit(men$republican))
+)
 
-mean_white <- bind_cols(list(mean(na.omit(all$race == 1)), 
-		mean(na.omit(dems$race == 1)),
-		mean(na.omit(reps$race == 1)),
-		mean(na.omit(women$race == 1)),
-		mean(na.omit(men$race == 1))
-	))
+mean_white <- tibble(all   = mean(na.omit(all$race == 1)), 
+                     dems  = mean(na.omit(dems$race == 1)),
+                     reps  = mean(na.omit(reps$race == 1)), 
+                     women = mean(na.omit(women$race == 1)),
+                     men   = mean(na.omit(men$race == 1))
+)
 
-mean_yearb <- bind_cols(list(mean(na.omit(all$yearb)), 
-		mean(na.omit(dems$yearb)),
-		mean(na.omit(reps$yearb)),
-		mean(na.omit(women$yearb)),
-		mean(na.omit(men$yearb))
-	))
+mean_yearb <- tibble(all   = mean(na.omit(all$yearb)), 
+                     dems  = mean(na.omit(dems$yearb)),
+                     reps  = mean(na.omit(reps$yearb)), 
+                     women = mean(na.omit(women$yearb)),
+                     men   = mean(na.omit(men$yearb))
+)
 
-no_judges <- bind_cols(list(nrow(all), nrow(dems), nrow(reps), nrow(women), nrow(men)))
+no_judges <- tibble(all   = nrow(all), 
+                    dems  = nrow(dems), 
+                    reps  = nrow(reps), 
+                    women = nrow(women), 
+                    men   = nrow(men))
 
-demographic_table <- bind_rows(list(mean_kids, mean_girls, prop_zero, prop_one,
-	prop_two, prop_three, prop_four, prop_five, prop_six_or_greater, mean_female, mean_rep, mean_white, mean_yearb, no_judges))
+demographic_table <- rbind(mean_kids, mean_girls, 
+                           prop_zero, prop_one,prop_two, prop_three, prop_four, prop_five,
+                           prop_six_or_greater, 
+                           mean_female, mean_rep, mean_white, mean_yearb, no_judges) %>% 
+  mutate(all   = as.numeric(all),
+         dems  = as.numeric(dems),
+         reps  = as.numeric(reps),
+         women = as.numeric(women),
+         men   = as.numeric(men))
 
-colnames(demographic_table) <- c("All", "Democrats", "Republicans","Women", "Men")
 rownames(demographic_table) <- c("Mean Number of Children", "Mean Number of Girls",
 	"Proportion Who Have 0 Children","1 Child",
 	"2 Children", "3 Children",
@@ -167,10 +180,9 @@ rownames(demographic_table) <- c("Mean Number of Children", "Mean Number of Girl
 
 # creating nicely formatted table
 demographic_table %>% 
-  kable(digits = 2, booktabs = TRUE) %>% 
+  kable(booktabs = TRUE, digits = 2,
+        col.names = c("All", "Democrats", "Republicans","Women", "Men")) %>% 
   kable_styling(position = "center")
-
-row.names = NA
 ```
 
 
