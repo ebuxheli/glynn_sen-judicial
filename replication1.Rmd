@@ -250,6 +250,8 @@ gg %>%
 "Weighted least squares results, gender cases only. Outcome is proportion of feminist votes.  Models 1--4 are for all judges, while Models 5--8 are for judges with 1--4 children.  (No judge among those with 1--4 children had four girls.) All models include fixed effects for number of children and use weights based on the number of cases heard by each judge."
 
 
+
+
 # Table 4: Weighted Least Squares Results, Gender-Related Cases Only
 ```{r stargazer, results="asis"}
 ########################################################
@@ -302,6 +304,71 @@ stargazer(mod_1, mod_2, mod_3, mod_4, mod_5, mod_6, mod_7, mod_8,
                                "Woman","African American","Hispanic",
                                "Constant"))
 ```
+
+
+\newpage
+
+"Weighted least squares results, gender cases only. Outcome is proportion of feminist votes.  Models 1--4 are for all judges, while Models 5--8 are for judges with 1--4 children.  (No judge among those with 1--4 children had four girls.) All models include fixed effects for number of children and use weights based on the number of cases heard by each judge."
+
+THIS IS THE ONE WITH THE DATA THAT WE CHANGED UP! SO THIS IS THE CASE WHERE WE ONLY USE THE DATA FOR JUDGES WITH MORE THAN 5 CASES IN THE DATA
+
+
+
+# Table 4: Weighted Least Squares Results, Gender-Related Cases Only
+```{r, results="asis"}
+########################################################
+## Table 4: Core Results (WLS) 
+########################################################
+
+## Note from John: had to change as.factor(circuit.1) to as.factor(circuit_1), 
+# because of the way that Zelig changed how they handle renaming columns
+# with the same name
+
+################ Results for all judges
+
+judge_data_geq6 <- filter(judge_data, no_cases > 5)
+
+mod_1 <- lm(lib_vote_share ~ as.factor(girls) + as.factor(child), 
+	data = judge_data_geq6, weights = judge_data_geq6$no_cases)
+
+mod_2 <- lm(lib_vote_share ~ I(girls>0) + as.factor(child), 
+	data = judge_data_geq6, weights = judge_data_geq6$no_cases)
+
+mod_3 <- lm(lib_vote_share ~ I(girls>0) + as.factor(child) + republican + age + I(religion == 4) + woman + I(race == 2) + I(race ==3), 
+	data = judge_data_geq6, weights = judge_data_geq6$no_cases)
+
+mod_4 <- lm(lib_vote_share ~ I(girls>0) + as.factor(child) + republican + age + I(religion == 4) + woman + I(race == 2) + I(race ==3) + as.factor(circuit_1), 
+	data = judge_data_geq6, weights = judge_data_geq6$no_cases)
+		
+################ Results for judges between 1 and 4 children
+	
+mod_5 <- lm(lib_vote_share ~ as.factor(girls) + as.factor(child), 
+	data = subset(judge_data_geq6, child < 5 & child > 0), weights = judge_data_geq6$no_cases[which(judge_data_geq6$child > 0 & judge_data_geq6$child < 5)])
+
+mod_6 <- lm(lib_vote_share ~ I(girls>0) + as.factor(child), 
+	data = subset(judge_data_geq6, child < 5 & child > 0), weights = judge_data_geq6$no_cases[which(judge_data_geq6$child > 0 & judge_data_geq6$child < 5)])
+
+mod_7 <- lm(lib_vote_share ~ I(girls>0) + as.factor(child) + republican + age + I(religion == 4) + woman + I(race == 2) + I(race ==3), 
+	data = subset(judge_data_geq6, child < 5 & child > 0), weights = judge_data_geq6$no_cases[which(judge_data_geq6$child > 0 & judge_data_geq6$child < 5)])
+
+mod_8 <- lm(lib_vote_share ~ I(girls>0) + as.factor(child) + republican + age + I(religion == 4) + woman + I(race == 2) + I(race ==3) + as.factor(circuit_1), 
+	data = subset(judge_data_geq6, child < 5 & child > 0), weights = judge_data_geq6$no_cases[which(judge_data_geq6$child > 0 & judge_data_geq6$child < 5)])
+
+
+cat("\\setcounter{table}{3}")
+stargazer(mod_1, mod_2, mod_3, mod_4, mod_5, mod_6, mod_7, mod_8, 
+          header = FALSE, style = "apsr", omit.stat = c("f","ser"),  font.size = "small",
+          column.sep.width = "-8pt", digits = 2, 
+          omit = c("circuit"), #line to omit descriptors
+          dep.var.labels=c("All Judges","Judges with 1-4 Children"), #attempt at grouping columns
+          keep = c("girls", "republican", "age", "religion", "woman", "race", "coefficients"),
+          covariate.labels = c("1 Girl","2 Girls","3 Girls","4 Girls","5 Girls",
+                               "At Least 1 Girl",	
+                               "Republican","Age at Investiture","Catholic",
+                               "Woman","African American","Hispanic",
+                               "Constant"))
+```
+
 
 \newpage
 
