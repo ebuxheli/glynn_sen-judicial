@@ -272,7 +272,7 @@ The algorithm also very heavily weights cases with a significant amount of data.
 
 The main motivation for this analysis in table 4 is the realization that there are many low case counts for many judges, which potentially results in a significant discrepancy or error interval surrounding their empirically observed proportion of votes cast in a feminist manner. For example, using a Bayesian and binomial interpretation of the proportion of votes cast in a feminist manner, a judge with only four data points informing an estimate of his or her likelihood to vote would have a large error interval.
 
-It should be recognized that the quality and estimation of this data is of the utmost importance. If the predictor is biased towards a fewer number of values than needed, or is off by some small but unexpected amount, that could potentially affect the outcomes of many court cases. 
+It should be recognized that the quality and estimation of this data is of the utmost importance. If the predictor is biased towards using the data of a a small number of judges, then the the model may not generalize sufficiently to other cases.
 
 
 
