@@ -25,12 +25,15 @@ library(stargazer)
 ## The below are global options used to clean up the formatting and 
 ## overall appearance of the code.
 
+# this is a good thing to do in general, nice
+
 # Global option used in table to replace NAs with '-' for aesthetics
 options(knitr.kable.NA = '-')
 # Global option used in creating tables to get rid of junk output
 options(xtable.comment = FALSE)
 ```
 
+Definitely want a short abstract in the future 
 
 ```{r xtable, results="asis"}
 
@@ -40,6 +43,8 @@ options(xtable.comment = FALSE)
 # than sorry!
 case_data  <- read_csv("dataverse_files/glynn_sen_daughters_by_case_1.csv") %>% clean_names()
 judge_data <- read_csv("dataverse_files/glynn_sen_daughters_by_judge.csv") %>% clean_names()
+
+# good
            
 
 ########################################################
@@ -181,6 +186,8 @@ rownames(demographic_table) <- c("Mean Number of Children", "Mean Number of Girl
 	"2 Children", "3 Children",
 	"4 Children", "5 Children", "6 Children or More", "Proportion Female", "Proportion Republican",
 	"Proportion White", "Mean Year Born", "N")
+	
+	# really nicely formatted table in the PDF, good job
 
 # creating nicely formatted table
 demographic_table %>% 
@@ -207,6 +214,8 @@ judge_data <- cbind(judge_data, no_cases)
 ########################################################
 ## Calculating the Outcome Var
 ########################################################
+
+# comments on what this is doing (besides calculating outcome var) would be good
 
 no_liberalvote <- matrix(data = NA, nrow = nrow(judge_data), ncol = 1)
 for(i in 1:length(no_liberalvote)){
@@ -258,13 +267,15 @@ rownames(gg) <- c("All Judges", "Democrats", "Republicans")
 gg %>% 
   kable(digits = 2, booktabs = TRUE) %>% 
   kable_styling(position = "center")
+  
+  # very nice table again
 ```
 
 \newpage
 
 # Table 4: Weighted Least Squares Results, Gender-Related Cases Only
 
-This table deals with a regression of the percent increase in the likelihood of a judge deciding a case in the feminine direction. The weights in the regression correspond to the number of cases that have been heard by each judge. This application in the paper makes sense, because it is desireable to assign more significance in our model to the data we are more sure is correct (in this case defined as having more observed occurences of a judge's behavior). 
+This table deals with a regression of the percent increase in the likelihood of a judge deciding a case in the feminine (feminist) direction. The weights in the regression correspond to the number of cases that have been heard by each judge. This application in the paper makes sense, because it is desireable to assign more significance in our model to the data we are more sure is correct (in this case defined as having more observed occurences of a judge's behavior). 
 
 However, there are concerns with the overall shape of the data. First, the data set contains a lot of very low numbers of cases - 50% of the judges have less than or equal to 8 cases that describe them, and 25% have less than or equal to 5 cases. On the low end, that means there are a lot of judges who have a very low numbers of cases we have data on. This means the proportion of progressive votes decided could be significantly inaccurate for many judges with very small case files. Because the model underweighs these areas of the data, however, the deletion of these potentially incorrect points should not affect the ultimate model. 
 
@@ -274,6 +285,7 @@ The main motivation for this analysis in table 4 is the realization that there a
 
 It should be recognized that the quality and estimation of this data is of the utmost importance. If the predictor is biased towards using the data of a a small number of judges, then the the model may not generalize sufficiently to other cases.
 
+Excellent, clear, and thorough description, this is great and shows me how you're thinking through the choices made by the authors
 
 
 \newpage
@@ -321,6 +333,7 @@ mod_7 <- lm(lib_vote_share ~ I(girls>0) + as.factor(child) + republican + age + 
 mod_8 <- lm(lib_vote_share ~ I(girls>0) + as.factor(child) + republican + age + I(religion == 4) + woman + I(race == 2) + I(race ==3) + as.factor(circuit_1), 
 	data = subset(judge_data, child < 5 & child > 0), weights = judge_data$no_cases[which(judge_data$child > 0 & judge_data$child < 5)])
 
+# see https://www.jakeruss.com/cheatsheets/stargazer/#labelling-the-table for how to caption the table with stargazer
 
 cat("\\setcounter{table}{3}")
 stargazer(mod_1, mod_2, mod_3, mod_4, mod_5, mod_6, mod_7, mod_8, 
@@ -341,7 +354,7 @@ stargazer(mod_1, mod_2, mod_3, mod_4, mod_5, mod_6, mod_7, mod_8,
 
 THIS IS THE ONE WITH THE DATA THAT WE CHANGED UP! SO THIS IS THE CASE WHERE WE ONLY USE THE DATA FOR JUDGES WITH less than 14 CASES IN THE DATA
 
-
+Good way to check the robustness of the results. Talk about what you find and why it is or is not intersting/expected
 
 # Table 4: Weighted Least Squares Results, Gender-Related Cases Only
 ```{r, results="asis"}
@@ -468,9 +481,13 @@ stargazer(mod_1, mod_2, mod_3, mod_4, mod_5, mod_6, mod_7, mod_8,
 
 One main critique of this table is that it treats every case as if it is identical, and tries to abstract away the details. This could not be further from the truth. It is possible that some judges do not hear some cases because the lower courts within the jurisdiction are more conservative/liberal, and so prevent reasonable cases from showing up in some areas, as opposed to others. There are other potential errors, including a small number of people who have heard a large number of cases - this means that there are going to be a lot of cases with the same inputs, and this can greatly affect the model. 
 
+Good things to point out, fixed effects will account for a fair bit of this variation, but not all of it!
+
 The whole argument for this paper is based off of the correctness of the variable progressive_vote, and this assumption appears to be questionable. The skewness of the number of cases makes it so that a small proportion of judges have heard a large number of the cases in the dataset. These prolific judges will result in a large number of cases that all have the same inputted demographic features, which will mean that the model can fit to this small portion of the population well and predict the overall outcomes of the lawsuits. 
 
-Future work would check if there is a significant but spurious correlation between the number of cases in this dataset, the pattern of voting, and the pattern of demographic data. If these correlations existed, then the validity of the paper would be in question. 
+Future work would check if there is a significant but spurious correlation between the number of cases in this dataset, the pattern of voting, and the pattern of demographic data. If these correlations existed, then the validity of the paper would be in question.
+
+Great suggestion, this is something that could be done as a final project
 
 \newpage
 
@@ -782,3 +799,7 @@ text(x = .7, y = 1, "Democrats", pos = 4, cex = 0.9)
 text(x = .075, y = .6, "All", pos = 4, cex = 0.9)
 
 ```
+
+Moving forward, we'll definitely want bibliographies for replications
+
+This is a great first replication. It would be helpful to me if the tables/figures were kept in the same order as they appear in the paper, but everything looks professionally done, your comments are clear and detailed, and code efficient and elegannt Great work!
